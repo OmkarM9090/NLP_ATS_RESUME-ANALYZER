@@ -1,0 +1,269 @@
+/* --------------------------------------------------------------------------
+   ATS Resume Matcher — global styles
+
+   Fonts are bundled locally (no third-party font CDN at runtime):
+   - headings: Outfit Variable   (General Sans substitute — geometric grotesque)
+   - body:     Inter Variable    (Satoshi substitute — neutral grotesque)
+   - data:     JetBrains Mono Variable
+   Swap the @fontsource imports below for the licensed Fontshare files and the
+   whole design system follows, because everything reads the CSS variables.
+   -------------------------------------------------------------------------- */
+
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-heading: "Outfit Variable";
+    --font-body: "Inter Variable";
+    --font-mono: "JetBrains Mono Variable";
+
+    --color-bg: #0a0a0f;
+    --color-surface: #12121a;
+    --color-surface-raised: #1a1a2e;
+    --color-ink: #f8fafc;
+    --color-ink-muted: #94a3b8;
+    --color-line: #1e293b;
+
+    --section-pad-y: 60px;
+    --header-height: 72px;
+
+    color-scheme: dark;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --section-pad-y: 80px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --section-pad-y: 120px;
+    }
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    @apply bg-bg font-body text-body text-ink antialiased;
+    /* Layered background: faint grid + top glow, fixed so it never repaints. */
+    background-image:
+      radial-gradient(70% 50% at 50% -10%, rgba(99, 102, 241, 0.16), transparent 70%),
+      linear-gradient(to right, rgba(30, 41, 59, 0.28) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(30, 41, 59, 0.28) 1px, transparent 1px);
+    background-size: auto, 56px 56px, 56px 56px;
+    background-attachment: fixed;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: rgba(99, 102, 241, 0.35);
+    color: #f8fafc;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-400 ring-offset-2 ring-offset-bg;
+  }
+
+  /* Dark, thin scrollbars that match the surface palette. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2a3a52 transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #23304a;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #33456a;
+    background-clip: content-box;
+  }
+
+  /* Native form controls inherit the dark theme (date pickers, selects). */
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-ink-faint;
+  }
+}
+
+@layer components {
+  /* Page section: spec padding (120 / 80 / 60) and 1280px content width. */
+  .section {
+    @apply relative w-full;
+    padding-block: var(--section-pad-y);
+  }
+
+  .section-inner {
+    @apply container mx-auto w-full px-5 sm:px-6 lg:px-8;
+  }
+
+  .card {
+    @apply relative rounded-card border border-line bg-surface shadow-card;
+  }
+
+  .card-raised {
+    @apply relative rounded-card border border-line bg-surface-raised shadow-raised;
+  }
+
+  .eyebrow {
+    @apply font-mono text-micro uppercase tracking-[0.22em] text-secondary-300;
+  }
+
+  .label {
+    @apply font-mono text-micro uppercase tracking-[0.16em] text-ink-muted;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-line to-transparent;
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.28), 0 20px 60px -24px rgba(99, 102, 241, 0.6);
+  }
+
+  /* Numeric readouts (scores, counters, timings). */
+  .numeric {
+    @apply font-mono tabular-nums;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "zero" 1;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden rounded-button bg-surface-raised;
+    background-image: linear-gradient(
+      90deg,
+      rgba(248, 250, 252, 0.03) 0%,
+      rgba(248, 250, 252, 0.09) 50%,
+      rgba(248, 250, 252, 0.03) 100%
+    );
+    background-size: 480px 100%;
+    @apply animate-shimmer;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  }
+
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  /* SplitText-friendly: each char/word becomes an inline-block span. */
+  .split-parent {
+    will-change: transform;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Print: the results page exports a clean one-page report. */
+@media print {
+  body {
+    background: #fff !important;
+    color: #0f172a !important;
+    background-image: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .card,
+  .card-raised {
+    border-color: #cbd5e1 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  li {
+    color: #0f172a !important;
+  }
+}

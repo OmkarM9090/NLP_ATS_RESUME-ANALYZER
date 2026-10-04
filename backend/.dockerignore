@@ -1,0 +1,28 @@
+# Build/CI artefacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local state — never bake a database, uploads or model cache into the image
+var/
+*.db
+*.sqlite3
+uploads/
+.env
+.env.*
+!.env.example
+
+# Tests and docs are not needed at runtime
+tests/
+pytest.ini
+Dockerfile
+.dockerignore
+
+# VCS
+.git/
+.gitignore

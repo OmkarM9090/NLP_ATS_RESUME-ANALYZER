@@ -1,0 +1,83 @@
+# ATS Resume Matcher — full stack.
+#
+#   docker compose up --build
+#
+#   frontend  http://localhost:3000
+#   backend   http://localhost:8000/docs
+#
+# The browser only ever talks to the frontend: Next.js rewrites /api/* to the
+# backend container, so no cross-origin calls and no leaked internal hostnames.
+
+name: ats-resume-matcher
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: ats-resume-matcher-backend:latest
+    container_name: ats-backend
+    restart: unless-stopped
+    environment:
+      ATS_ENVIRONMENT: ${ATS_ENVIRONMENT:-production}
+      ATS_DEBUG: ${ATS_DEBUG:-false}
+      ATS_HOST: 0.0.0.0
+      ATS_PORT: "8000"
+      ATS_DATABASE_URL: sqlite+aiosqlite:////var/lib/ats/ats_history.db
+      ATS_VAR_DIR: /var/lib/ats
+      ATS_CORS_ORIGINS: ${ATS_CORS_ORIGINS:-http://localhost:3000}
+      ATS_ANALYZE_RATE_LIMIT: ${ATS_ANALYZE_RATE_LIMIT:-10/minute}
+      ATS_ENABLE_EAGER_MODEL_LOAD: "true"
+      UVICORN_WORKERS: ${UVICORN_WORKERS:-2}
+    volumes:
+      # SQLite history, uploads and downloaded model weights survive restarts.
+      - ats-data:/var/lib/ats
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    networks:
+      - ats
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-ATS Resume Matcher}
+    image: ats-resume-matcher-frontend:latest
+    container_name: ats-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      # Server-side proxy target (never exposed to the browser).
+      BACKEND_INTERNAL_URL: http://backend:8000
+      # Same-origin prefix the client code calls; Next rewrites it to the backend.
+      NEXT_PUBLIC_API_BASE_URL: /api
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ats
+
+volumes:
+  ats-data:
+    driver: local
+
+networks:
+  ats:
+    driver: bridge

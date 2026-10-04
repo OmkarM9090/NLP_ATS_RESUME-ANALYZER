@@ -79,6 +79,20 @@ class TestHealthEndpoints:
         assert body["models"]
         assert "ocr_available" in body
 
+    async def test_health_is_degraded_when_models_are_fallbacks(self, client):
+        """Regression: the offline stack must not report `status: ok`.
+
+        spaCy loads successfully in its heuristic variant, so a check based on
+        `loaded` alone claims full capability while the encoder is unavailable.
+        """
+        from services.cache_service import model_registry
+
+        body = (await client.get(f"{API}/health")).json()
+        if model_registry.degraded:
+            assert body["status"] == "degraded"
+        else:
+            assert body["status"] == "ok"
+
     async def test_health_reports_model_state(self, client):
         body = (await client.get(f"{API}/health")).json()
         assert "spacy" in body["models"]

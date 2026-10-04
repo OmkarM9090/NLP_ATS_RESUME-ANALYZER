@@ -46,9 +46,10 @@ async def health(session: AsyncSession = Depends(session_scope)) -> HealthRespon
         logger.warning("health_db_check_failed", extra={"error": str(exc)})
 
     models = model_registry.status()
-    nlp_ready = bool(models.get("spacy") and models["spacy"].loaded)
+    spacy_status = models.get("spacy")
+    nlp_ready = bool(spacy_status and spacy_status.loaded)
     return HealthResponse(
-        status="ok" if nlp_ready and database_ok else "degraded",
+        status=_health_status(nlp_ready=nlp_ready, database_ok=database_ok),
         version=settings.app_version,
         environment=settings.environment,
         uptime_seconds=round(time.time() - _started_at, 1),
@@ -57,6 +58,23 @@ async def health(session: AsyncSession = Depends(session_scope)) -> HealthRespon
         database_ok=database_ok,
         analyses_count=analyses_count,
     )
+
+
+def _health_status(*, nlp_ready: bool, database_ok: bool) -> str:
+    """Derive the service status from real capability, not just "did it import".
+
+    - ``unhealthy``: the NLP pipeline cannot run at all, so every analysis fails.
+    - ``degraded``: analysis works, but on a fallback model (offline heuristic
+      spaCy, TF-IDF/LSA encoder) or with history storage unavailable. The
+      registry's own ``degraded`` flag is the source of truth here, so the API
+      never claims full capability while serving reduced-accuracy scores.
+    - ``ok``: full model stack and a reachable database.
+    """
+    if not nlp_ready:
+        return "unhealthy"
+    if model_registry.degraded or not database_ok:
+        return "degraded"
+    return "ok"
 
 
 @router.get(
