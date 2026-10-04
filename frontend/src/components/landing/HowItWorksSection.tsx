@@ -1,216 +1,288 @@
 "use client";
 
-import { FileUp, ScanSearch, LayoutDashboard } from "lucide-react";
-import { useGSAP } from "@/hooks/useGSAP";
+import { useEffect, useRef } from "react";
+import { FileUp, LayoutDashboard, ScanSearch } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap-config";
+import { revealOnScroll } from "@/lib/anim";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
   {
     num: "01",
     icon: FileUp,
-    title: "Upload both PDFs",
-    desc: "Drop your resume and the job description. Files are validated for type, size, corruption, and encryption before a byte is processed.",
-    visual: "upload",
+    title: "Drop in both documents",
+    body:
+      "Your resume and the job posting are validated for type, size, corruption and password protection before a single byte reaches the engine.",
+    visual: "upload" as const,
   },
   {
     num: "02",
     icon: ScanSearch,
-    title: "The NLP engine runs",
-    desc: "Text is cleaned, tokenized, lemmatized, POS-tagged and scanned for entities. Keywords are ranked with TF-IDF + RAKE while skills resolve through the taxonomy.",
-    visual: "pipeline",
+    title: "The pipeline runs",
+    body:
+      "Text is cleaned, tokenised, lemmatised, POS-tagged and scanned for entities. Keywords are ranked with TF-IDF + RAKE while skills resolve through the taxonomy.",
+    visual: "pipeline" as const,
   },
   {
     num: "03",
     icon: LayoutDashboard,
-    title: "Get your match report",
-    desc: "A 5-signal score, skill gap grid, keyword cloud, section breakdown, ATS format check, and prioritized fixes — exportable as JSON.",
-    visual: "report",
+    title: "Read the report, fix the gaps",
+    body:
+      "Five weighted signals, a skill-gap grid, section scores, an ATS audit and prioritised fixes — exportable as JSON or copyable as a summary.",
+    visual: "report" as const,
   },
-] as const;
+];
 
-function StepVisual({ kind }: { kind: (typeof STEPS)[number]["visual"] }) {
-  if (kind === "upload") {
-    return (
-      <div className="mt-8 flex gap-4">
-        {["resume.pdf", "job.pdf"].map((f, i) => (
-          <div
-            key={f}
-            className={cn(
-              "glass flex-1 rounded-xl border-dashed p-4 text-center",
-              i === 0 ? "border-primary/40" : "border-secondary/40",
-            )}
-          >
-            <FileUp className={cn("mx-auto h-5 w-5", i === 0 ? "text-primary" : "text-secondary")} />
-            <p className="mt-2 font-mono text-[10px] text-mist">{f}</p>
-            <div className="mx-auto mt-3 h-1 w-3/4 overflow-hidden rounded bg-white/10">
-              <div className="h-full w-full gradient-1" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (kind === "pipeline") {
-    const stages = ["tokens", "lemmas", "entities", "keywords", "vectors", "score"];
-    return (
-      <div className="mt-8 flex flex-wrap items-center gap-2">
-        {stages.map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
-            <span className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 font-mono text-[11px] text-indigo-300">
-              {s}
-            </span>
-            {i < stages.length - 1 && <span className="text-mist/40">→</span>}
-          </div>
-        ))}
-      </div>
-    );
-  }
+/* ------------------------------------------------------------------ visuals */
+
+function UploadVisual() {
   return (
-    <div className="mt-8 space-y-2.5">
+    <div className="mt-7 grid grid-cols-2 gap-3">
       {[
-        ["Keyword match", "w-[78%]", "#6366F1"],
-        ["Semantic similarity", "w-[85%]", "#06B6D4"],
-        ["Skill match", "w-[71%]", "#10B981"],
-      ].map(([label, w, c]) => (
-        <div key={label}>
-          <div className="mb-1 flex justify-between font-mono text-[10px] text-mist">
-            <span>{label}</span>
+        { name: "resume.pdf", tone: "primary" as const },
+        { name: "job-posting.pdf", tone: "secondary" as const },
+      ].map((f) => (
+        <div
+          key={f.name}
+          className={cn(
+            "rounded-xl border border-dashed bg-void/40 p-4",
+            f.tone === "primary" ? "border-primary/35" : "border-secondary/35",
+          )}
+        >
+          <div className="flex items-center justify-between">
+            <FileUp
+              className={cn("h-4 w-4", f.tone === "primary" ? "text-primary-2" : "text-secondary")}
+              strokeWidth={2}
+            />
+            <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-success">
+              ready
+            </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/8">
-            <div className={cn("h-full rounded-full", w)} style={{ background: c }} />
-          </div>
+          <p className="mt-3 truncate font-mono text-[10.5px] text-mist">{f.name}</p>
+          <span className="mt-3 block h-1 overflow-hidden rounded-full bg-white/[0.07]">
+            <span
+              className={cn(
+                "block h-full w-full rounded-full",
+                f.tone === "primary"
+                  ? "bg-gradient-to-r from-primary-2 to-primary"
+                  : "bg-gradient-to-r from-secondary/70 to-secondary",
+              )}
+            />
+          </span>
         </div>
       ))}
     </div>
   );
 }
 
+function PipelineVisual() {
+  const stages = [
+    { label: "tokens", value: "1,284" },
+    { label: "lemmas", value: "962" },
+    { label: "entities", value: "41" },
+    { label: "keywords", value: "25" },
+    { label: "vectors", value: "384d" },
+    { label: "score", value: "83" },
+  ];
+  return (
+    <div className="mt-7 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      {stages.map((s, i) => (
+        <div
+          key={s.label}
+          className="rounded-lg border border-white/[0.06] bg-void/40 px-3 py-2.5"
+          style={{ opacity: 1 - i * 0.06 }}
+        >
+          <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
+            {s.label}
+          </p>
+          <p className="mt-1 font-mono text-[15px] tabular-nums text-ink">{s.value}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ReportVisual() {
+  const rows = [
+    { label: "Keyword match", value: 78, color: "#8D7BFF" },
+    { label: "Semantic similarity", value: 86, color: "#24D3B4" },
+    { label: "Skill match", value: 81, color: "#34D399" },
+    { label: "ATS formatting", value: 92, color: "#F0A868" },
+  ];
+  return (
+    <div className="mt-7 space-y-3">
+      {rows.map((r) => (
+        <div key={r.label}>
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              {r.label}
+            </span>
+            <span className="font-mono text-[11px] tabular-nums text-mist">{r.value}</span>
+          </div>
+          <span className="block h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+            <span
+              className="block h-full w-full origin-left rounded-full"
+              style={{ background: r.color, transform: `scaleX(${r.value / 100})` }}
+            />
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------- section */
+
 export default function HowItWorksSection() {
-  const scope = useGSAP<HTMLElement>(({ scope }) => {
-    const el = scope.current!;
-    const mm = gsap.matchMedia();
+  const scope = useRef<HTMLElement>(null);
 
-    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
-      const track = el.querySelector<HTMLElement>(".hiw-track")!;
-      const panels = Array.from(el.querySelectorAll<HTMLElement>(".hiw-panel"));
-      const dots = Array.from(el.querySelectorAll<HTMLElement>(".hiw-dot"));
+  useEffect(() => {
+    const el = scope.current;
+    if (!el) return;
 
-      const distance = () => track.scrollWidth - window.innerWidth;
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
 
-      const tween = gsap.to(track, {
-        x: () => -distance(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: el.querySelector(".hiw-pinzone"),
-          start: "top top",
-          end: () => `+=${distance() * 1.05}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const idx = Math.min(
-              panels.length - 1,
-              Math.round(self.progress * (panels.length - 1)),
-            );
-            dots.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        const track = el.querySelector<HTMLElement>(".hiw-track");
+        const pinzone = el.querySelector<HTMLElement>(".hiw-pinzone");
+        if (!track || !pinzone) return;
+
+        const panels = gsap.utils.toArray<HTMLElement>(".hiw-panel", el);
+        const dots = gsap.utils.toArray<HTMLElement>(".hiw-dot", el);
+        const bar = el.querySelector<HTMLElement>(".hiw-rail-fill");
+        const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+        const tween = gsap.to(track, {
+          x: () => -distance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: pinzone,
+            start: "top top",
+            end: () => `+=${distance() * 1.06}`,
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              if (bar) gsap.set(bar, { scaleX: self.progress });
+              const idx = Math.min(
+                panels.length - 1,
+                Math.round(self.progress * (panels.length - 1)),
+              );
+              dots.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+            },
           },
-        } satisfies ScrollTrigger.Vars,
+        });
+
+        panels.forEach((panel) => {
+          const card = panel.querySelector(".hiw-card");
+          if (!card) return;
+          gsap.fromTo(
+            card,
+            { y: 34, opacity: 0.35, scale: 0.97 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: panel,
+                containerAnimation: tween,
+                start: "left 82%",
+                end: "left 40%",
+                scrub: true,
+              },
+            },
+          );
+        });
+
+        dots[0]?.classList.add("is-active");
+        return () => {
+          tween.scrollTrigger?.kill();
+          tween.kill();
+        };
       });
 
-      // per-panel clip reveal as they slide in
-      const reveals = panels.map((panel) =>
-        gsap.fromTo(
-          panel.querySelector(".hiw-card"),
-          { clipPath: "inset(12% 8% 12% 8% round 24px)", opacity: 0.4 },
-          {
-            clipPath: "inset(0% 0% 0% 0% round 24px)",
-            opacity: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: panel,
-              containerAnimation: tween,
-              start: "left 75%",
-              end: "left 30%",
-              scrub: true,
-            } satisfies ScrollTrigger.Vars,
-          },
-        ),
-      );
-
-      dots[0]?.classList.add("is-active");
-      return () => {
-        tween.scrollTrigger?.kill();
-        tween.kill();
-        reveals.forEach((r) => {
-          r.scrollTrigger?.kill();
-          r.kill();
-        });
-      };
-    });
-
-    mm.add("(max-width: 767px)", () => {
-      el.querySelectorAll(".hiw-panel").forEach((p) => {
-        gsap.from(p.querySelector(".hiw-card"), {
-          y: 56,
-          opacity: 0,
-          duration: 0.85,
-          ease: "power3.out",
-          scrollTrigger: { trigger: p, start: "top 85%", once: true } satisfies ScrollTrigger.Vars,
-        });
+      mm.add("(max-width: 767px)", () => {
+        const panels = gsap.utils.toArray<HTMLElement>(".hiw-panel", el);
+        revealOnScroll(panels, { trigger: el, y: 40, stagger: 0.1, start: "top 82%" });
       });
-    });
+
+      return () => mm.revert();
+    }, el);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={scope} id="how-it-works" className="relative">
-      <div className="hiw-pinzone relative md:h-screen md:overflow-hidden">
-        <div className="pointer-events-none absolute left-[-10%] top-[30%] h-[420px] w-[420px] rounded-full bg-secondary/10 blur-[140px]" />
+    <section ref={scope} id="how-it-works" className="relative scroll-mt-24">
+      <div className="hiw-pinzone relative overflow-hidden md:h-screen">
+        <div className="pointer-events-none absolute left-[-12%] top-[28%] h-[420px] w-[420px] rounded-full bg-secondary/[0.07] blur-[150px]" />
+        <div className="pointer-events-none absolute right-[-10%] top-[6%] h-[380px] w-[380px] rounded-full bg-primary/[0.12] blur-[150px]" />
 
-        <div className="mx-auto max-w-7xl px-5 pt-24 sm:px-8 md:pt-28">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-secondary">
-            How it works
-          </p>
-          <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-            Two PDFs in. <span className="gradient-text">Clarity out.</span>
-          </h2>
+        <div className="relative mx-auto max-w-7xl px-5 pt-24 sm:px-8 md:pt-28">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="eyebrow mb-4">
+                <span className="h-1 w-1 rounded-full bg-secondary" />
+                how it works
+              </p>
+              <h2 className="display-2">
+                Two documents in.{" "}
+                <span className="text-gradient">A decision out.</span>
+              </h2>
+            </div>
+            <p className="lede max-w-sm lg:pb-2">
+              Roughly one second of compute per pair — on CPU, with no data
+              leaving the request.
+            </p>
+          </div>
         </div>
 
-        <div className="mt-10 md:absolute md:inset-x-0 md:top-1/2 md:mt-0 md:-translate-y-[42%]">
+        <div className="relative mt-10 md:absolute md:inset-x-0 md:top-1/2 md:mt-0 md:-translate-y-[40%]">
           <div className="hiw-track flex flex-col md:w-max md:flex-row">
-            {STEPS.map((s) => (
+            {STEPS.map((step) => (
               <div
-                key={s.num}
-                className="hiw-panel w-full shrink-0 px-5 pb-10 sm:px-8 md:w-[78vw] md:pb-0 lg:w-[62vw] xl:w-[54vw]"
+                key={step.num}
+                className="hiw-panel w-full shrink-0 px-5 pb-12 sm:px-8 md:w-[80vw] md:pb-0 lg:w-[62vw] xl:w-[54vw]"
               >
-                <div className="hiw-card glass relative mx-auto max-w-2xl rounded-3xl p-8 sm:p-10">
-                  <span className="pointer-events-none absolute -top-3 right-6 font-display text-7xl font-bold text-white/[0.045] sm:text-8xl">
-                    {s.num}
-                  </span>
-                  <span className="gradient-1 flex h-12 w-12 items-center justify-center rounded-xl shadow-[0_10px_30px_-8px_rgba(99,102,241,0.6)]">
-                    <s.icon className="h-5.5 w-5.5 text-white" strokeWidth={2} />
-                  </span>
-                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-                    {s.title}
+                <div className="hiw-card card mx-auto max-w-2xl p-7 sm:p-9">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-b from-white/[0.09] to-white/[0.02] ring-1 ring-white/[0.09]">
+                      <step.icon className="h-5 w-5 text-ink/85" strokeWidth={1.9} />
+                    </span>
+                    <span className="font-mono text-[11px] tracking-[0.2em] text-faint">
+                      step {step.num}
+                    </span>
+                  </div>
+                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-[-0.025em] sm:text-[28px]">
+                    {step.title}
                   </h3>
-                  <p className="mt-3 max-w-lg text-sm leading-relaxed text-mist sm:text-base">
-                    {s.desc}
+                  <p className="mt-3 max-w-lg text-[14.5px] leading-relaxed text-mist">
+                    {step.body}
                   </p>
-                  <StepVisual kind={s.visual} />
+                  {step.visual === "upload" && <UploadVisual />}
+                  {step.visual === "pipeline" && <PipelineVisual />}
+                  {step.visual === "report" && <ReportVisual />}
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="hidden md:absolute md:bottom-12 md:left-1/2 md:flex md:-translate-x-1/2 md:items-center md:gap-2.5">
-          {STEPS.map((s) => (
-            <span
-              key={s.num}
-              className="hiw-dot h-1.5 w-6 rounded-full bg-white/15 transition-all duration-500 [&.is-active]:w-10 [&.is-active]:bg-gradient-to-r [&.is-active]:from-primary [&.is-active]:to-secondary"
-            />
-          ))}
+        <div className="relative mx-auto mt-2 flex max-w-7xl items-center gap-4 px-5 pb-16 sm:px-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:w-[min(92vw,1100px)] md:-translate-x-1/2 md:pb-0">
+          <span className="relative h-px flex-1 overflow-hidden bg-white/[0.09]">
+            <span className="hiw-rail-fill block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-primary-2 to-secondary" />
+          </span>
+          <div className="flex items-center gap-2">
+            {STEPS.map((s) => (
+              <span
+                key={s.num}
+                className="hiw-dot h-1.5 w-5 rounded-full bg-white/12 transition-all duration-500 [&.is-active]:w-9 [&.is-active]:bg-gradient-to-r [&.is-active]:from-primary-2 [&.is-active]:to-secondary"
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

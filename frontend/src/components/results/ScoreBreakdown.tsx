@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap-config";
 import type { ScoreBreakdown as SB } from "@/types/analysis";
 import { scoreColor } from "@/lib/utils";
 
@@ -12,7 +13,7 @@ const LABELS: Record<keyof SB, string> = {
   education_match: "Education match",
 };
 
-const ORDER: (keyof SB)[] = [
+const ORDER: Array<keyof SB> = [
   "semantic_similarity",
   "keyword_match",
   "skill_match",
@@ -27,60 +28,109 @@ export default function ScoreBreakdown({
   breakdown: SB;
   keywordDensity: { resume: number; jd: number };
 }) {
+  const scope = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scope.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      const rows = el.querySelectorAll("[data-sb-row]");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      gsap.set(rows, { opacity: 0, y: 16 });
+      gsap.set(el.querySelectorAll("[data-sb-fill]"), { scaleX: 0 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        defaults: { ease: "power3.out" },
+      });
+
+      tl.to(rows, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07 });
+      if (!reduced) {
+        tl.to(
+          el.querySelectorAll("[data-sb-fill]"),
+          { scaleX: 1, duration: 1.1, stagger: 0.07 },
+          0.15,
+        );
+      } else {
+        gsap.set(el.querySelectorAll("[data-sb-fill]"), { scaleX: 1 });
+      }
+    }, el);
+
+    return () => ctx.revert();
+  }, [breakdown]);
+
   return (
-    <div className="glass h-full rounded-2xl p-6 sm:p-7">
-      <h3 className="font-display text-base font-semibold">Score breakdown</h3>
-      <p className="mt-1 text-xs text-mist">Five weighted signals fuse into the overall score.</p>
+    <div ref={scope} className="card h-full rounded-2xl p-6 sm:p-7">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="font-display text-[16px] font-semibold tracking-[-0.02em]">
+            Score breakdown
+          </h3>
+          <p className="mt-1 text-[12.5px] text-faint">
+            Five weighted signals fuse into the overall score.
+          </p>
+        </div>
+        <span className="chip">weighted</span>
+      </div>
 
       <div className="mt-6 space-y-5">
-        {ORDER.map((key, i) => {
+        {ORDER.map((key) => {
           const comp = breakdown[key];
           const color = scoreColor(comp.score);
           return (
-            <div key={key}>
-              <div className="mb-1.5 flex items-baseline justify-between gap-2">
-                <span className="text-sm text-ink/90">{LABELS[key]}</span>
-                <span className="flex items-baseline gap-2">
-                  <span className="font-mono text-[10px] text-mist/60">
-                    ×{comp.weight.toFixed(2)}
+            <div key={key} data-sb-row>
+              <div className="mb-2 flex items-baseline justify-between gap-3">
+                <span className="text-[13.5px] text-ink/90">{LABELS[key]}</span>
+                <span className="flex items-baseline gap-2.5">
+                  <span className="font-mono text-[10px] text-faint">
+                    w {comp.weight.toFixed(2)}
                   </span>
-                  <span className="font-mono text-sm font-semibold" style={{ color }}>
+                  <span
+                    className="w-9 text-right font-mono text-[13px] font-semibold tabular-nums"
+                    style={{ color }}
+                  >
                     {comp.score.toFixed(1)}
                   </span>
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-white/8">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ background: `linear-gradient(90deg, ${color}cc, ${color})` }}
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${comp.score}%` }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 1.1, delay: 0.15 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              <span className="block h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                <span
+                  data-sb-fill
+                  className="block h-full origin-left rounded-full"
+                  style={{
+                    width: `${Math.max(2, comp.score)}%`,
+                    background: `linear-gradient(90deg, ${color}99, ${color})`,
+                  }}
                 />
-              </div>
+              </span>
             </div>
           );
         })}
       </div>
 
-      <div className="mt-7 border-t border-line/60 pt-5">
-        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60">
-          Domain keyword density
+      <div className="mt-7 border-t border-white/[0.06] pt-5">
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
+          domain keyword density
         </p>
-        <div className="grid grid-cols-2 gap-3 font-mono text-xs">
-          <div className="rounded-lg bg-white/[0.03] px-3 py-2.5">
-            <span className="text-mist">resume&nbsp;</span>
-            <span className="font-semibold text-ink">
-              {(keywordDensity.resume * 100).toFixed(1)}%
-            </span>
-          </div>
-          <div className="rounded-lg bg-white/[0.03] px-3 py-2.5">
-            <span className="text-mist">job post&nbsp;</span>
-            <span className="font-semibold text-ink">
-              {(keywordDensity.jd * 100).toFixed(1)}%
-            </span>
-          </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "resume", value: keywordDensity.resume },
+            { label: "job post", value: keywordDensity.jd },
+          ].map((d) => (
+            <div
+              key={d.label}
+              className="rounded-xl border border-white/[0.06] bg-void/40 px-3.5 py-3"
+            >
+              <p className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
+                {d.label}
+              </p>
+              <p className="mt-1 font-mono text-[15px] font-semibold tabular-nums text-ink">
+                {(d.value * 100).toFixed(1)}%
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

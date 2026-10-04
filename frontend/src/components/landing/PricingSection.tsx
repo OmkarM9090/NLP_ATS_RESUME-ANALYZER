@@ -1,22 +1,24 @@
 "use client";
 
-import { Check, Crown } from "lucide-react";
-import { useGSAP } from "@/hooks/useGSAP";
+import { useEffect, useRef } from "react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { gsap } from "@/lib/gsap-config";
+import { attachTilt } from "@/lib/anim";
+import { SectionHeading } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
-import { SectionHeading, LinkButton } from "@/components/ui/primitives";
 
 const TIERS = [
   {
     name: "Free",
     price: "$0",
     period: "forever",
-    blurb: "Everything you need for a focused job hunt.",
+    blurb: "Everything you need for a focused job search.",
     features: [
       "Unlimited resume analyses",
-      "Full 12-stage NLP pipeline",
-      "Skill gap & keyword analysis",
-      "ATS formatting check",
+      "Full NLP pipeline (14 stages)",
+      "Skill gaps & keyword coverage",
+      "ATS formatting audit",
+      "Session history",
     ],
     cta: "Start free",
     href: "/analyze",
@@ -26,110 +28,161 @@ const TIERS = [
     name: "Pro",
     price: "$9",
     period: "/month",
-    blurb: "For power applicants running many applications.",
+    blurb: "For people applying deliberately, at volume.",
     features: [
       "Everything in Free",
-      "Unlimited history & comparisons",
-      "JSON report export",
+      "Unlimited stored history",
+      "JSON + summary export",
       "Priority pipeline queue",
-      "Keyword density tuning tips",
+      "Keyword density tuning notes",
+      "Side-by-side version compare",
     ],
     cta: "Go Pro",
     href: "/analyze",
     featured: true,
   },
   {
-    name: "Enterprise",
+    name: "Teams",
     price: "Custom",
     period: "",
-    blurb: "Career centers, bootcamps, and recruiting teams.",
+    blurb: "Career centres, bootcamps and hiring teams.",
     features: [
       "Everything in Pro",
       "Team dashboards",
       "Custom skill taxonomy",
-      "API access",
+      "REST API access",
+      "SSO & audit log",
     ],
-    cta: "Contact sales",
+    cta: "Talk to us",
     href: "/analyze",
     featured: false,
   },
 ];
 
 export default function PricingSection() {
-  const scope = useGSAP<HTMLElement>(({ scope }) => {
-    gsap.from(scope.current!.querySelectorAll("[data-tier]"), {
-      rotateY: -16,
-      y: 60,
-      opacity: 0,
-      transformPerspective: 1100,
-      stagger: 0.12,
-      duration: 1,
-      ease: "power3.out",
-      scrollTrigger: { trigger: scope.current, start: "top 76%", once: true },
+  const scope = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = scope.current;
+    if (!el) return;
+    const cleanups: Array<() => void> = [];
+    el.querySelectorAll<HTMLElement>("[data-tier]").forEach((tier) => {
+      cleanups.push(attachTilt(tier, 5));
     });
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el.querySelectorAll("[data-tier]"),
+        { y: 52, opacity: 0, rotateX: -10, transformPerspective: 1000 },
+        {
+          y: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 1,
+          stagger: 0.11,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 74%", once: true },
+        },
+      );
+    }, el);
+    return () => {
+      cleanups.forEach((c) => c());
+      ctx.revert();
+    };
   }, []);
 
   return (
-    <section ref={scope} id="pricing" className="relative py-24 sm:py-32">
-      <div className="pointer-events-none absolute bottom-0 left-1/2 h-[380px] w-[820px] -translate-x-1/2 rounded-full bg-accent/10 blur-[170px]" />
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+    <section ref={scope} id="pricing" className="relative scroll-mt-24 py-24 sm:py-32">
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-[340px] w-[820px] -translate-x-1/2 rounded-full bg-primary/[0.09] blur-[170px]" />
+
+      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHeading
-          kicker="Pricing"
+          kicker="pricing"
           title={
             <>
-              Start free. <span className="gradient-text">Upgrade when it matters.</span>
+              Start free.{" "}
+              <span className="text-gradient">Upgrade only if it pays for itself.</span>
             </>
           }
-          description="No accounts, no paywall between you and your first analysis."
+          description="No account required for your first analysis, and no paywall between you and your score."
         />
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3 md:items-stretch">
-          {TIERS.map((t) => (
+        <div className="mt-16 grid items-stretch gap-5 md:grid-cols-3">
+          {TIERS.map((tier) => (
             <div
-              key={t.name}
+              key={tier.name}
               data-tier
               className={cn(
-                "relative flex flex-col rounded-2xl p-7 will-change-transform",
-                t.featured
-                  ? "ring-conic glass-strong shadow-[0_30px_90px_-30px_rgba(99,102,241,0.5)] md:-my-3 md:scale-[1.015]"
-                  : "glass",
+                "card relative flex flex-col p-6 sm:p-7",
+                tier.featured
+                  ? "ring-gradient bg-[linear-gradient(180deg,rgba(110,86,248,0.14),rgba(14,16,22,0.7))] shadow-[0_50px_110px_-50px_rgba(110,86,248,0.9)] md:-my-3 md:py-9"
+                  : "card-hover",
               )}
             >
-              {t.featured && (
-                <span className="absolute -top-3.5 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full gradient-1 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-lg">
-                  <Crown className="h-3 w-3" />
-                  Most popular
+              {tier.featured && (
+                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r from-primary-2 to-primary px-3 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-white shadow-[0_10px_24px_-12px_rgba(110,86,248,1)]">
+                  <Sparkles className="h-3 w-3" strokeWidth={2.4} />
+                  most popular
                 </span>
               )}
-              <h3 className="font-display text-lg font-semibold">{t.name}</h3>
-              <div className="mt-4 flex items-end gap-1.5">
-                <span className="font-display text-4xl font-bold tracking-tight">{t.price}</span>
-                {t.period && <span className="pb-1.5 text-sm text-mist">{t.period}</span>}
+
+              <div className="flex items-baseline justify-between">
+                <h3 className="font-display text-[15px] font-semibold uppercase tracking-[0.16em] text-ink/90">
+                  {tier.name}
+                </h3>
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-mist">{t.blurb}</p>
-              <ul className="mt-6 flex-1 space-y-3">
-                {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-ink/85">
-                    <Check
+
+              <p className="mt-5 flex items-baseline gap-1.5">
+                <span className="font-display text-[38px] font-bold leading-none tracking-[-0.04em]">
+                  {tier.price}
+                </span>
+                {tier.period && (
+                  <span className="font-mono text-[11px] text-faint">{tier.period}</span>
+                )}
+              </p>
+              <p className="mt-3 text-[13.5px] leading-relaxed text-mist">{tier.blurb}</p>
+
+              <div className="my-6 h-px bg-gradient-to-r from-white/[0.1] to-transparent" />
+
+              <ul className="flex-1 space-y-3">
+                {tier.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5">
+                    <span
                       className={cn(
-                        "mt-0.5 h-4 w-4 shrink-0",
-                        t.featured ? "text-secondary" : "text-success",
+                        "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full",
+                        tier.featured ? "bg-primary/25" : "bg-white/[0.07]",
                       )}
-                    />
-                    {f}
+                    >
+                      <Check
+                        className={cn(
+                          "h-2.5 w-2.5",
+                          tier.featured ? "text-primary-2" : "text-mist",
+                        )}
+                        strokeWidth={3}
+                      />
+                    </span>
+                    <span className="text-[13.5px] leading-snug text-ink/85">{f}</span>
                   </li>
                 ))}
               </ul>
-              <LinkButton
-                href={t.href}
-                variant={t.featured ? "primary" : "secondary"}
-                className="mt-8 w-full"
+
+              <a
+                href={tier.href}
+                className={cn(
+                  "btn group mt-8 w-full",
+                  tier.featured ? "btn-primary" : "btn-secondary",
+                )}
               >
-                {t.cta}
-              </LinkButton>
+                {tier.cta}
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
             </div>
           ))}
         </div>
+
+        <p className="mt-10 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
+          this build runs the free tier · paid plans are illustrative
+        </p>
       </div>
     </section>
   );

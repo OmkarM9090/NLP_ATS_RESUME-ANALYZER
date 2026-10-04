@@ -1,140 +1,162 @@
 "use client";
 
-import { Star } from "lucide-react";
-import { useGSAP } from "@/hooks/useGSAP";
+import { useEffect, useRef } from "react";
+import { Quote, Star } from "lucide-react";
 import { gsap } from "@/lib/gsap-config";
 import { SectionHeading } from "@/components/ui/primitives";
 
 const TESTIMONIALS = [
   {
     quote:
-      "I applied to 40 jobs with a generic resume and heard nothing. ResumeAI showed me I was missing half the JD's actual keywords. Rewrote two sections, landed 3 callbacks in two weeks.",
+      "I applied to forty jobs with a generic resume and heard nothing back. ResumeAI showed me I was missing half of the posting's actual keywords. Two sections rewritten, three callbacks in two weeks.",
     name: "Maya R.",
-    role: "Product Designer → Fintech",
+    role: "Product Designer → fintech",
     initials: "MR",
-    tone: "from-indigo-500 to-cyan-400",
+    tone: "from-primary-2 to-primary",
   },
   {
     quote:
-      "The partial-match feature is brilliant — it caught that I wrote “React.js” while the JD said “React”, and that my “data analysis” didn't match their “data analytics”. No ATS parser gives you that nuance.",
+      "The partial-match list is the part nobody else gives you. It caught that I wrote “React.js” where the posting said “React”, and that “data analysis” did not match their “data analytics”.",
     name: "Daniel K.",
-    role: "Data Analyst → Healthcare",
+    role: "Data Analyst → healthcare",
     initials: "DK",
-    tone: "from-fuchsia-500 to-indigo-400",
+    tone: "from-secondary to-emerald-500",
   },
   {
     quote:
-      "As a career coach, I run every client resume through it before submission. The section-by-section scores and ATS format check have become my go/no-go checklist.",
+      "As a coach I run every client resume through it before submission. The section-by-section scores and the formatting audit became my go/no-go checklist.",
     name: "Priya S.",
-    role: "Career Coach, 8 yrs",
+    role: "Career coach, 8 years",
     initials: "PS",
-    tone: "from-emerald-500 to-cyan-400",
+    tone: "from-accent to-primary-2",
   },
 ];
 
 export default function TestimonialsSection() {
-  const scope = useGSAP<HTMLElement>(({ scope }) => {
-    const el = scope.current!;
-    const wrap = el.querySelector<HTMLElement>(".tst-wrap")!;
-    const stage = el.querySelector<HTMLElement>(".tst-stage")!;
-    const cards = Array.from(el.querySelectorAll<HTMLElement>(".tst-card"));
+  const scope = useRef<HTMLElement>(null);
 
-    const mm = gsap.matchMedia();
-    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
-      wrap.style.height = "300vh";
-      stage.classList.add(
-        "sticky", "top-0", "h-screen", "flex", "items-center", "justify-center", "overflow-hidden",
-      );
-      cards.forEach((c) => {
-        c.classList.add("absolute", "inset-x-0", "mx-auto");
-      });
+  useEffect(() => {
+    const el = scope.current;
+    if (!el) return;
 
-      gsap.set(cards[0], { zIndex: 30 });
-      gsap.set(cards[1], { zIndex: 20, scale: 0.93, y: 42, opacity: 0.85 });
-      gsap.set(cards[2], { zIndex: 10, scale: 0.87, y: 84, opacity: 0.6 });
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrap,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1,
-        },
-      });
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        const wrap = el.querySelector<HTMLElement>(".tst-wrap");
+        const stage = el.querySelector<HTMLElement>(".tst-stage");
+        const stack = el.querySelector<HTMLElement>(".tst-stack");
+        const cards = gsap.utils.toArray<HTMLElement>(".tst-card", el);
+        if (!wrap || !stage || !stack || cards.length < 3) return;
 
-      tl.to(cards[0], { yPercent: -125, rotation: 7, opacity: 0, ease: "power2.in", duration: 1 })
-        .to(cards[1], { scale: 1, y: 0, opacity: 1, ease: "power2.out", duration: 1 }, "<")
-        .to(cards[2], { scale: 0.93, y: 42, opacity: 0.85, ease: "power2.out", duration: 1 }, "<")
-        .to({}, { duration: 0.25 })
-        .to(cards[1], { yPercent: -125, rotation: -7, opacity: 0, ease: "power2.in", duration: 1 })
-        .to(cards[2], { scale: 1, y: 0, opacity: 1, ease: "power2.out", duration: 1 }, "<")
-        .to({}, { duration: 0.3 });
+        wrap.style.height = "290vh";
+        stage.classList.add("sticky", "top-0", "flex", "h-screen", "items-center");
+        cards.forEach((c) => c.classList.add("absolute", "inset-x-0", "mx-auto"));
 
-      return () => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
-        wrap.style.height = "";
-        stage.classList.remove(
-          "sticky", "top-0", "h-screen", "flex", "items-center", "justify-center", "overflow-hidden",
-        );
-        cards.forEach((c) => {
-          c.classList.remove("absolute", "inset-x-0", "mx-auto");
-          gsap.set(c, { clearProps: "all" });
+        gsap.set(cards[0], { zIndex: 30, y: 0, scale: 1, opacity: 1 });
+        gsap.set(cards[1], { zIndex: 20, y: 46, scale: 0.945, opacity: 0.55 });
+        gsap.set(cards[2], { zIndex: 10, y: 92, scale: 0.89, opacity: 0.3 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: wrap, start: "top top", end: "bottom bottom", scrub: 0.9 },
         });
-      };
-    });
 
-    mm.add("(max-width: 767px)", () => {
-      cards.forEach((c, i) => {
-        gsap.from(c, {
-          y: 60,
+        tl.to(cards[0], {
+          yPercent: -118,
+          rotation: 5,
           opacity: 0,
-          duration: 0.85,
-          delay: i * 0.05,
+          ease: "power2.in",
+          duration: 1,
+        })
+          .to(cards[1], { y: 0, scale: 1, opacity: 1, ease: "power2.out", duration: 1 }, "<")
+          .to(cards[2], { y: 46, scale: 0.945, opacity: 0.55, ease: "power2.out", duration: 1 }, "<")
+          .to({}, { duration: 0.3 })
+          .to(cards[1], {
+            yPercent: -118,
+            rotation: -5,
+            opacity: 0,
+            ease: "power2.in",
+            duration: 1,
+          })
+          .to(cards[2], { y: 0, scale: 1, opacity: 1, ease: "power2.out", duration: 1 }, "<")
+          .to({}, { duration: 0.3 });
+
+        return () => {
+          tl.scrollTrigger?.kill();
+          tl.kill();
+          wrap.style.height = "";
+          stage.classList.remove("sticky", "top-0", "flex", "h-screen", "items-center");
+          cards.forEach((c) => {
+            c.classList.remove("absolute", "inset-x-0", "mx-auto");
+            gsap.set(c, { clearProps: "all" });
+          });
+        };
+      });
+
+      mm.add("(max-width: 767px)", () => {
+        gsap.from(el.querySelectorAll(".tst-card"), {
+          y: 44,
+          opacity: 0,
+          duration: 0.9,
+          stagger: 0.12,
           ease: "power3.out",
-          scrollTrigger: { trigger: c, start: "top 88%", once: true },
+          scrollTrigger: { trigger: el, start: "top 76%", once: true },
         });
       });
-    });
+
+      return () => mm.revert();
+    }, el);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <section ref={scope} className="relative py-24 sm:py-32">
-      <SectionHeading
-        kicker="Social proof"
-        title={
-          <>
-            Resumes that <span className="gradient-text">got through.</span>
-          </>
-        }
-        description="Real outcomes from people who stopped guessing what the ATS wanted."
-      />
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <SectionHeading
+          kicker="outcomes"
+          title={
+            <>
+              Resumes that <span className="text-gradient">got through.</span>
+            </>
+          }
+          description="Three people who stopped guessing what the filter wanted."
+        />
+      </div>
 
-      <div className="tst-wrap relative mx-auto mt-6 max-w-7xl px-5 sm:px-8">
+      <div className="tst-wrap relative mx-auto mt-14 max-w-4xl px-5 sm:px-8">
         <div className="tst-stage relative">
-          <div className="relative flex w-full flex-col items-center gap-8 md:block md:h-[420px]">
+          <div className="tst-stack relative flex flex-col items-center gap-6 md:h-[330px] md:block">
             {TESTIMONIALS.map((t) => (
               <figure
                 key={t.name}
-                className="tst-card glass w-full max-w-2xl rounded-3xl p-8 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)] sm:p-10"
+                className="tst-card card relative w-full max-w-2xl rounded-3xl p-7 shadow-[0_50px_110px_-50px_rgba(0,0,0,1)] sm:p-9"
               >
+                <Quote
+                  className="absolute right-8 top-7 h-8 w-8 text-white/[0.06]"
+                  strokeWidth={2}
+                />
                 <div className="flex gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-warning text-warning" />
+                    <Star key={i} className="h-3.5 w-3.5 fill-accent text-accent" />
                   ))}
                 </div>
-                <blockquote className="mt-5 text-base leading-relaxed text-ink/90 sm:text-lg">
-                  “{t.quote}”
+                <blockquote className="mt-5 text-[15.5px] leading-relaxed text-ink/90 sm:text-[17px]">
+                  &ldquo;{t.quote}&rdquo;
                 </blockquote>
-                <figcaption className="mt-6 flex items-center gap-3.5">
+                <figcaption className="mt-7 flex items-center gap-3.5 border-t border-white/[0.06] pt-5">
                   <span
-                    className={`flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br ${t.tone} font-display text-sm font-bold text-white`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${t.tone} font-display text-[13px] font-bold text-white ring-1 ring-white/15`}
                   >
                     {t.initials}
                   </span>
-                  <span>
-                    <span className="block font-display text-sm font-semibold">{t.name}</span>
-                    <span className="block text-xs text-mist">{t.role}</span>
+                  <span className="min-w-0">
+                    <span className="block font-display text-[14px] font-semibold tracking-[-0.01em]">
+                      {t.name}
+                    </span>
+                    <span className="block font-mono text-[10.5px] uppercase tracking-[0.14em] text-faint">
+                      {t.role}
+                    </span>
                   </span>
                 </figcaption>
               </figure>

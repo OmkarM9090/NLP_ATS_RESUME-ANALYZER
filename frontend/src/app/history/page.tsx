@@ -8,12 +8,11 @@ import {
   Sparkles,
 } from "lucide-react";
 import { listAnalyses } from "@/lib/analysis-store";
-import { formatDate, scoreColor, scoreLabel } from "@/lib/utils";
-import DeleteButton from "@/components/history/DeleteButton";
+import HistoryList from "@/components/history/HistoryList";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Analysis History" };
+export const metadata: Metadata = { title: "Analysis history" };
 
 const PAGE_SIZE = 10;
 
@@ -39,119 +38,93 @@ export default async function HistoryPage({
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <main className="relative min-h-screen px-5 pb-24 pt-28 sm:px-8">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[380px] bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(99,102,241,0.12),transparent)]" />
+    <main className="relative min-h-screen px-5 pb-24 pt-28 sm:px-8 lg:pt-32">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(ellipse_55%_100%_at_50%_0%,rgba(110,86,248,0.13),transparent)]" />
 
       <div className="relative mx-auto max-w-4xl">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <header className="flex flex-wrap items-end justify-between gap-5">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-secondary">
-              Stored reports
+            <p className="eyebrow">
+              <span className="h-1 w-1 rounded-full bg-secondary" />
+              stored reports
             </p>
-            <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              Analysis <span className="gradient-text">history</span>
+            <h1 className="display-3 mt-4">
+              Analysis <span className="text-gradient">history</span>
             </h1>
+            <p className="mt-3 max-w-lg text-[14px] leading-relaxed text-mist">
+              Every completed analysis is persisted so you can revisit the score,
+              the gaps and the fix list without re-uploading anything.
+            </p>
           </div>
-          <Link
-            href="/analyze"
-            className="gradient-1 inline-flex h-11 items-center gap-2 rounded-xl px-5 font-display text-sm font-semibold text-white"
-          >
-            <Sparkles className="h-4 w-4" /> New analysis
+
+          <Link href="/analyze" className="btn btn-primary group h-11 px-5 text-[13.5px]">
+            <Sparkles className="h-3.5 w-3.5" strokeWidth={2.3} />
+            New analysis
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
-        </div>
+        </header>
 
         {dbError ? (
-          <div className="mt-12 rounded-2xl border border-warning/30 bg-warning/[0.06] p-6 text-sm text-mist">
-            History is temporarily unavailable — the database connection
-            couldn&apos;t be reached. New analyses still work end-to-end.
+          <div className="mt-12 flex items-start gap-3 rounded-2xl border border-warning/25 bg-warning/[0.06] p-6">
+            <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-warning" />
+            <p className="text-[13.5px] leading-relaxed text-mist">
+              History is temporarily unavailable — the database connection
+              couldn&apos;t be reached. New analyses still work end-to-end.
+            </p>
           </div>
         ) : rows.length === 0 ? (
-          <div className="mt-14 flex flex-col items-center rounded-3xl glass p-14 text-center">
-            <HistoryIcon className="h-10 w-10 text-mist/60" />
-            <h2 className="mt-5 font-display text-xl font-semibold">No analyses yet</h2>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-mist">
-              Your completed analyses are stored here so you can revisit scores,
-              gaps, and recommendations anytime.
+          <div className="card mt-12 flex flex-col items-center rounded-3xl px-8 py-16 text-center">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08]">
+              <HistoryIcon className="h-6 w-6 text-faint" strokeWidth={1.8} />
+            </span>
+            <h2 className="mt-6 font-display text-[19px] font-semibold tracking-[-0.02em]">
+              No reports stored yet
+            </h2>
+            <p className="mt-2.5 max-w-sm text-[13.5px] leading-relaxed text-mist">
+              Run an analysis and it will appear here — with the full score
+              breakdown, gaps and recommendations attached.
             </p>
-            <Link href="/analyze?sample=1" className="mt-7">
-              <span className="inline-flex h-12 items-center gap-2 rounded-xl border border-primary/40 px-7 font-display text-sm font-semibold text-indigo-300 transition-colors hover:bg-primary/10">
-                Run the sample analysis <ArrowRight className="h-4 w-4" />
-              </span>
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/analyze?sample=1" className="btn btn-primary h-11 px-5 text-[13.5px]">
+                <Sparkles className="h-3.5 w-3.5" />
+                Run the sample pair
+              </Link>
+              <Link href="/analyze" className="btn btn-secondary h-11 px-5 text-[13.5px]">
+                Upload my documents
+              </Link>
+            </div>
           </div>
         ) : (
           <>
-            <p className="mt-6 font-mono text-xs text-mist/70">
-              {total} report{total === 1 ? "" : "s"} · page {page} of {pages}
-            </p>
-            <ul className="mt-4 space-y-3">
-              {rows.map((r) => {
-                const color = scoreColor(r.overallScore);
-                return (
-                  <li key={r.id}>
-                    <div className="group flex items-center gap-4 rounded-2xl glass px-5 py-4 transition-all duration-300 hover:border-primary/35 hover:bg-white/[0.05]">
-                      <div
-                        className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl border"
-                        style={{ borderColor: `${color}55`, background: `${color}14` }}
-                      >
-                        <span className="font-mono text-lg font-bold leading-none" style={{ color }}>
-                          {Math.round(r.overallScore)}
-                        </span>
-                        <span className="mt-0.5 text-[8px] uppercase tracking-wider text-mist/70">
-                          {scoreLabel(r.overallScore).split(" ")[0]}
-                        </span>
-                      </div>
+            <div className="mt-10 flex items-center gap-4">
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-faint">
+                {total} report{total === 1 ? "" : "s"} · page {page} of {pages}
+              </p>
+              <span className="h-px flex-1 bg-gradient-to-r from-white/[0.1] to-transparent" />
+            </div>
 
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-display text-sm font-semibold text-ink">
-                          {r.resumeFilename}
-                          <span className="mx-2 font-normal text-mist/50">vs</span>
-                          <span className="font-normal text-mist">{r.jdFilename}</span>
-                        </p>
-                        <p className="mt-1 font-mono text-[11px] text-mist/60">
-                          {formatDate(r.createdAt.toISOString())} · id {r.id.slice(0, 8)}
-                        </p>
-                      </div>
-
-                      <Link
-                        href={`/results?id=${r.id}`}
-                        className="hidden h-9 items-center gap-1.5 rounded-lg border border-line px-3.5 text-xs font-medium text-mist transition-all duration-200 hover:border-secondary/50 hover:text-secondary sm:inline-flex"
-                      >
-                        Open <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                      <DeleteButton id={r.id} />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+            <HistoryList rows={rows} />
 
             {pages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-3">
+              <div className="mt-9 flex items-center justify-center gap-3">
                 {page > 1 ? (
-                  <Link
-                    href={`/history?page=${page - 1}`}
-                    className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line px-4 text-sm text-mist transition-colors hover:text-ink"
-                  >
+                  <Link href={`/history?page=${page - 1}`} className="btn btn-secondary h-10 px-4 text-[13px]">
                     <ChevronLeft className="h-4 w-4" /> Prev
                   </Link>
                 ) : (
-                  <span className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line/50 px-4 text-sm text-mist/40">
+                  <span className="btn btn-secondary h-10 cursor-not-allowed px-4 text-[13px] opacity-40">
                     <ChevronLeft className="h-4 w-4" /> Prev
                   </span>
                 )}
-                <span className="font-mono text-xs text-mist">
+                <span className="font-mono text-[11px] tabular-nums text-faint">
                   {page} / {pages}
                 </span>
                 {page < pages ? (
-                  <Link
-                    href={`/history?page=${page + 1}`}
-                    className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line px-4 text-sm text-mist transition-colors hover:text-ink"
-                  >
+                  <Link href={`/history?page=${page + 1}`} className="btn btn-secondary h-10 px-4 text-[13px]">
                     Next <ChevronRight className="h-4 w-4" />
                   </Link>
                 ) : (
-                  <span className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line/50 px-4 text-sm text-mist/40">
+                  <span className="btn btn-secondary h-10 cursor-not-allowed px-4 text-[13px] opacity-40">
                     Next <ChevronRight className="h-4 w-4" />
                   </span>
                 )}

@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { Mail, ScanText } from "lucide-react";
-import { useGSAP } from "@/hooks/useGSAP";
-import { gsap, ScrollTrigger } from "@/lib/gsap-config";
+import { gsap, revealOnScroll } from "@/lib/anim";
+import { healthCheck } from "@/lib/api";
+
+const REPO_URL = "https://github.com/OmkarM9090/NLP_ATS_RESUME-ANALYZER";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -29,98 +32,108 @@ function LinkedInIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-const COLS = [
+const COLUMNS = [
   {
     title: "Product",
     links: [
-      { label: "Analyze a Resume", href: "/analyze" },
-      { label: "Try Sample Analysis", href: "/analyze?sample=1" },
-      { label: "Analysis History", href: "/history" },
+      { label: "Analyze a resume", href: "/analyze" },
+      { label: "Run sample analysis", href: "/analyze?sample=1" },
+      { label: "Analysis history", href: "/history" },
       { label: "Pricing", href: "/#pricing" },
     ],
   },
   {
-    title: "Resources",
+    title: "Engine",
     links: [
-      { label: "How It Works", href: "/#how-it-works" },
-      { label: "NLP Features", href: "/#features" },
-      { label: "API Health", href: "/api/health" },
+      { label: "How it works", href: "/#how-it-works" },
+      { label: "Scoring signals", href: "/#features" },
+      { label: "API reference", href: "http://127.0.0.1:8000/docs" },
+      { label: "Service health", href: "/api/health" },
     ],
   },
   {
-    title: "Legal",
+    title: "Project",
     links: [
-      { label: "Privacy Notice", href: "/#privacy" },
-      { label: "Terms of Use", href: "/#terms" },
-      { label: "Data Retention", href: "/#retention" },
+      { label: "Source code", href: REPO_URL },
+      { label: "README", href: `${REPO_URL}#readme` },
+      { label: "Report an issue", href: `${REPO_URL}/issues` },
+      { label: "License (MIT)", href: `${REPO_URL}/blob/main/LICENSE` },
     ],
   },
 ];
 
 const SOCIALS = [
-  { icon: GithubIcon, href: "https://github.com", label: "GitHub" },
+  { icon: GithubIcon, href: REPO_URL, label: "GitHub" },
   { icon: XIcon, href: "https://x.com", label: "X (Twitter)" },
   { icon: LinkedInIcon, href: "https://linkedin.com", label: "LinkedIn" },
   { icon: Mail, href: "mailto:hello@resumeai.dev", label: "Email" },
 ];
 
 export default function Footer() {
-  const scope = useGSAP<HTMLElement>(({ scope }) => {
-    const line = scope.current?.querySelector(".footer-line");
-    if (line) {
-      gsap.fromTo(
-        line,
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          transformOrigin: "left center",
-          duration: 1.4,
-          ease: "power3.inOut",
-          scrollTrigger: {
-            trigger: scope.current,
-            start: "top 92%",
-            once: true,
-          } satisfies ScrollTrigger.Vars,
-        },
-      );
-    }
-    const cols = scope.current?.querySelectorAll("[data-footer-col]");
-    if (cols?.length) {
-      gsap.from(cols, {
-        y: 28,
-        opacity: 0,
-        stagger: 0.08,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: scope.current,
-          start: "top 88%",
-          once: true,
-        } satisfies ScrollTrigger.Vars,
+  const scope = useRef<HTMLElement>(null);
+  const [status, setStatus] = useState<"checking" | "online" | "offline">("checking");
+
+  useEffect(() => {
+    let cancelled = false;
+    healthCheck()
+      .then((h) => !cancelled && setStatus(h.status === "ok" ? "online" : "offline"))
+      .catch(() => !cancelled && setStatus("offline"));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = scope.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      revealOnScroll(el.querySelectorAll("[data-footer-col]"), {
+        trigger: el,
+        y: 26,
+        stagger: 0.07,
+        start: "top 92%",
       });
-    }
+      const line = el.querySelector(".footer-rule");
+      if (line) {
+        gsap.fromTo(
+          line,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            transformOrigin: "left center",
+            duration: 1.5,
+            ease: "power3.inOut",
+            scrollTrigger: { trigger: el, start: "top 94%", once: true },
+          },
+        );
+      }
+    }, el);
+    return () => ctx.revert();
   }, []);
 
   return (
-    <footer ref={scope} className="relative border-t border-line/60 bg-panel">
-      <div className="footer-line absolute -top-px left-0 h-px w-full gradient-1" />
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <footer ref={scope} className="relative overflow-hidden border-t border-white/[0.06]">
+      <div className="pointer-events-none absolute inset-x-0 -top-40 h-80 bg-[radial-gradient(ellipse_50%_100%_at_50%_100%,rgba(110,86,248,0.14),transparent)]" />
+      <div className="footer-rule absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+
+      <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-16 sm:px-8 sm:pt-20">
+        <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
           <div data-footer-col>
-            <Link href="/" className="flex items-center gap-2.5">
-              <span className="gradient-1 flex h-9 w-9 items-center justify-center rounded-lg">
-                <ScanText className="h-4.5 w-4.5 text-white" strokeWidth={2.4} />
+            <Link href="/" className="flex items-center gap-2.5" aria-label="ResumeAI home">
+              <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-[11px] bg-gradient-to-b from-primary-2 to-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
+                <ScanText className="h-[18px] w-[18px] text-white" strokeWidth={2.3} />
               </span>
-              <span className="font-display text-lg font-bold tracking-tight">
-                Resume<span className="gradient-text">AI</span>
+              <span className="font-display text-[17px] font-bold tracking-[-0.03em]">
+                Resume<span className="text-gradient-mint">AI</span>
               </span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-mist">
-              Multi-dimensional ATS resume analysis powered by a transparent,
-              inspectable NLP pipeline — keyword, semantic, skill, experience,
-              and education signals combined.
+            <p className="mt-5 max-w-xs text-[13.5px] leading-relaxed text-mist">
+              A transparent ATS resume analyzer. Upload a resume and a job
+              description to see the five weighted signals, the exact skill
+              gaps, and the fixes that move your score.
             </p>
-            <div className="mt-6 flex gap-3">
+
+            <div className="mt-6 flex items-center gap-2">
               {SOCIALS.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
@@ -128,42 +141,76 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-mist transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:text-ink"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.03] text-mist ring-1 ring-white/[0.07] transition-all duration-300 hover:-translate-y-0.5 hover:text-ink hover:ring-white/20"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
+
+            <div className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-white/[0.03] px-3 py-1.5 ring-1 ring-white/[0.07]">
+              <span className="relative flex h-1.5 w-1.5">
+                <span
+                  className={
+                    status === "online"
+                      ? "absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-70"
+                      : "hidden"
+                  }
+                />
+                <span
+                  className={
+                    "relative inline-flex h-1.5 w-1.5 rounded-full " +
+                    (status === "online"
+                      ? "bg-success"
+                      : status === "offline"
+                        ? "bg-warning"
+                        : "bg-faint")
+                  }
+                />
+              </span>
+              <span className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-mist">
+                {status === "online"
+                  ? "nlp api online"
+                  : status === "offline"
+                    ? "api unreachable"
+                    : "checking api"}
+              </span>
+            </div>
           </div>
 
-          {COLS.map((col) => (
+          {COLUMNS.map((col) => (
             <div key={col.title} data-footer-col>
-              <h4 className="font-display text-sm font-semibold uppercase tracking-wider text-ink">
+              <h4 className="font-mono text-[10.5px] font-medium uppercase tracking-[0.22em] text-faint">
                 {col.title}
               </h4>
-              <ul className="mt-4 space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      className="text-sm text-mist transition-colors duration-200 hover:text-ink"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
+              <ul className="mt-5 space-y-3">
+                {col.links.map((l) => {
+                  const external = l.href.startsWith("http");
+                  return (
+                    <li key={l.label}>
+                      <Link
+                        href={l.href}
+                        {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+                        className="group inline-flex items-center text-[13.5px] text-mist transition-colors duration-200 hover:text-ink"
+                      >
+                        <span className="mr-0 h-px w-0 bg-primary-2 transition-all duration-300 group-hover:mr-2 group-hover:w-3" />
+                        {l.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-line/50 pt-7 sm:flex-row">
-          <p className="text-xs text-mist">
-            © 2026 ResumeAI. Resumes are analyzed in request scope — nothing is
-            shared or sold.
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-6 sm:flex-row">
+          <p className="text-[12.5px] text-faint">
+            © {new Date().getFullYear()} ResumeAI · Resumes are analyzed in request
+            scope and never shared.
           </p>
-          <p className="font-mono text-[11px] text-mist/70">
-            pipeline: tf-idf · rake · semantic-coverage · skill-taxonomy · ner
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-faint">
+            tf-idf · rake · semantic · taxonomy · ner
           </p>
         </div>
       </div>

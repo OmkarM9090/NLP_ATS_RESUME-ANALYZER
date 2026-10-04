@@ -16,6 +16,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  /**
+   * The app is developed inside a sandbox and previewed through a proxied
+   * host (`<port>-<sandbox>.e2b.app`). Next blocks dev-only resources such as
+   * the HMR socket for unknown origins, so allow the preview host (and
+   * localhost) explicitly. This only affects `next dev`.
+   */
+  allowedDevOrigins: [
+    "*.e2b.app",
+    "*.e2b.dev",
+    "localhost",
+    "127.0.0.1",
+  ],
 };
 
 export default nextConfig;
