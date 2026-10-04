@@ -7,7 +7,7 @@ import {
   History as HistoryIcon,
   Sparkles,
 } from "lucide-react";
-import { listAnalyses } from "@/lib/server/analysis-store";
+import { listAnalyses } from "@/lib/analysis-store";
 import { formatDate, scoreColor, scoreLabel } from "@/lib/utils";
 import DeleteButton from "@/components/history/DeleteButton";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGSAP } from "@/hooks/useGSAP";
 import { gsap } from "@/lib/gsap-config";
 
@@ -8,10 +8,13 @@ export const PRELOADER_FLAG = "resumeai:preloaded";
 const LETTERS = "RESUME".split("");
 
 export default function Preloader() {
-  const [active, setActive] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !sessionStorage.getItem(PRELOADER_FLAG);
-  });
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    if (sessionStorage.getItem(PRELOADER_FLAG)) {
+      setActive(false);
+    }
+  }, []);
 
   const scope = useGSAP<HTMLDivElement>(({ scope }) => {
     if (!active || !scope.current) return;
