@@ -70,9 +70,9 @@ export function EntitiesPanel({ entities }: { entities: EntityExtraction }) {
             <Chips items={r.dates} empty="None detected" />
           </Row>
           <Row icon={Timer} label="Est. experience">
-            {r.years_of_experience != null ? (
+            {r.years_experience != null ? (
               <span className="font-mono font-semibold text-secondary">
-                ~{r.years_of_experience} years
+                ~{r.years_experience} years
               </span>
             ) : (
               <span className="text-mist/60">Could not estimate — add explicit date ranges</span>
@@ -85,13 +85,16 @@ export function EntitiesPanel({ entities }: { entities: EntityExtraction }) {
             <Chips items={r.certifications} empty="None detected" />
           </Row>
           <Row icon={Mail} label="Contact">
-            {r.contacts.emails.length || r.contacts.phones.length ? (
+            {(r.emails?.length || r.phones?.length) ? (
               <span className="space-y-0.5 font-mono text-xs">
-                {r.contacts.emails.map((e) => (
+                {(r.emails ?? []).map((e) => (
                   <span key={e} className="block text-secondary">{e}</span>
                 ))}
-                {r.contacts.phones.map((p) => (
+                {(r.phones ?? []).map((p) => (
                   <span key={p} className="block text-mist">{p}</span>
+                ))}
+                {(r.urls ?? []).slice(0, 2).map((u) => (
+                  <span key={u} className="block text-mist/70">{u}</span>
                 ))}
               </span>
             ) : (

@@ -114,6 +114,104 @@ async def _read_upload(upload: UploadFile, field: str) -> bytes:
     return data
 
 
+async def _run_pipeline(
+    request: Request,
+    resume_bytes: bytes,
+    jd_bytes: bytes,
+    *,
+    resume_name: str,
+    jd_name: str,
+    session: AsyncSession,
+    resume_content_type: Optional[str] = None,
+    jd_content_type: Optional[str] = None,
+    weights: Optional[Dict[str, float]] = None,
+    top_keywords: Optional[int] = None,
+    include_section_text: bool = False,
+    persist: bool = True,
+) -> AnalysisResponse:
+    """Shared core of the analyze endpoints: validate, run, persist."""
+    # Validation raises typed 4xx errors (extension, size, magic bytes, PDF
+    # structure, encryption) before any NLP work happens.
+    file_validator.validate(
+        resume_bytes, resume_name, content_type=resume_content_type, field="resume"
+    )
+    file_validator.validate(
+        jd_bytes, jd_name, content_type=jd_content_type, field="job_description"
+    )
+
+    service = get_analysis_service()
+    logger.info(
+        "analysis_requested",
+        extra={
+            "resume": resume_name,
+            "resume_bytes": len(resume_bytes),
+            "jd": jd_name,
+            "jd_bytes": len(jd_bytes),
+            "weights": weights,
+            "top_keywords": top_keywords,
+            "client": request.client.host if request.client else "unknown",
+        },
+    )
+
+    try:
+        result = await asyncio.wait_for(
+            run_in_threadpool(
+                service.run_full_analysis,
+                resume_bytes,
+                jd_bytes,
+                resume_filename=resume_name,
+                jd_filename=jd_name,
+                resume_size_bytes=len(resume_bytes),
+                jd_size_bytes=len(jd_bytes),
+                weights=weights,
+                top_keywords=top_keywords,
+                include_section_text=include_section_text,
+            ),
+            timeout=settings.analysis_timeout_seconds,
+        )
+    except asyncio.TimeoutError as exc:
+        logger.error(
+            "analysis_timeout",
+            extra={"timeout_seconds": settings.analysis_timeout_seconds,
+                   "resume": resume_name},
+        )
+        raise AnalysisTimeoutError(
+            f"Analysis exceeded the {settings.analysis_timeout_seconds}s time budget.",
+            context={"timeout_seconds": settings.analysis_timeout_seconds},
+        ) from exc
+
+    if persist:
+        try:
+            from models.database import AnalysisRepository
+
+            await AnalysisRepository(session).save(
+                result,
+                resume_filename=resume_name,
+                jd_filename=jd_name,
+                preview=result.verdict[:280],
+            )
+        except Exception as exc:  # noqa: BLE001 - history is best effort
+            logger.error(
+                "analysis_persist_failed",
+                extra={"error": str(exc), "id": result.id},
+            )
+            result.nlp_metadata.warnings.append(
+                "The result could not be saved to history, but the analysis succeeded."
+            )
+
+    logger.info(
+        "analysis_served",
+        extra={
+            "id": result.id,
+            "score": result.overall_score,
+            "grade": result.grade,
+            "duration_ms": result.nlp_metadata.processing_time_ms,
+            "persisted": persist,
+        },
+    )
+    return result
+
+
 @router.post(
     "/analyze",
     response_model=AnalysisResponse,
@@ -162,91 +260,68 @@ async def analyze(
     resume_name = file_validator.sanitize_filename(resume.filename or "resume.pdf")
     jd_name = file_validator.sanitize_filename(job_description.filename or "job_description.pdf")
 
-    # Validation raises typed 4xx errors (extension, size, magic bytes, PDF
-    # structure, encryption) before any NLP work happens.
-    file_validator.validate(
-        resume_bytes, resume_name, content_type=resume.content_type, field="resume"
-    )
-    file_validator.validate(
-        jd_bytes, jd_name, content_type=job_description.content_type, field="job_description"
-    )
-
     parsed_weights = _parse_weights(weights)
     parsed_top_keywords = _parse_int(top_keywords, "top_keywords", 5, 60)
     want_section_text = _parse_bool(include_section_text, default=False)
     want_persist = _parse_bool(persist, default=True)
 
-    service = get_analysis_service()
-    logger.info(
-        "analysis_requested",
-        extra={
-            "resume": resume_name,
-            "resume_bytes": len(resume_bytes),
-            "jd": jd_name,
-            "jd_bytes": len(jd_bytes),
-            "weights": parsed_weights,
-            "top_keywords": parsed_top_keywords,
-            "client": request.client.host if request.client else "unknown",
-        },
+    return await _run_pipeline(
+        request,
+        resume_bytes,
+        jd_bytes,
+        resume_name=resume_name,
+        jd_name=jd_name,
+        session=session,
+        resume_content_type=resume.content_type,
+        jd_content_type=job_description.content_type,
+        weights=parsed_weights,
+        top_keywords=parsed_top_keywords,
+        include_section_text=want_section_text,
+        persist=want_persist,
     )
 
-    try:
-        result = await asyncio.wait_for(
-            run_in_threadpool(
-                service.run_full_analysis,
-                resume_bytes,
-                jd_bytes,
-                resume_filename=resume_name,
-                jd_filename=jd_name,
-                resume_size_bytes=len(resume_bytes),
-                jd_size_bytes=len(jd_bytes),
-                weights=parsed_weights,
-                top_keywords=parsed_top_keywords,
-                include_section_text=want_section_text,
-            ),
-            timeout=settings.analysis_timeout_seconds,
-        )
-    except asyncio.TimeoutError as exc:
-        logger.error(
-            "analysis_timeout",
-            extra={"timeout_seconds": settings.analysis_timeout_seconds,
-                   "resume": resume_name},
-        )
-        raise AnalysisTimeoutError(
-            f"Analysis exceeded the {settings.analysis_timeout_seconds}s time budget.",
-            context={"timeout_seconds": settings.analysis_timeout_seconds},
-        ) from exc
 
-    if want_persist:
-        try:
-            from models.database import AnalysisRepository
-
-            await AnalysisRepository(session).save(
-                result,
-                resume_filename=resume_name,
-                jd_filename=jd_name,
-                preview=result.verdict[:280],
-            )
-        except Exception as exc:  # noqa: BLE001 - history is best effort
-            logger.error(
-                "analysis_persist_failed",
-                extra={"error": str(exc), "id": result.id},
-            )
-            result.nlp_metadata.warnings.append(
-                "The result could not be saved to history, but the analysis succeeded."
-            )
+@router.post(
+    "/sample",
+    response_model=AnalysisResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Analyse the bundled sample resume against the sample job description",
+    description=(
+        "Runs the full pipeline on the realistic sample documents shipped with "
+        "the backend (``tests/fixtures.py``) so the UI can be explored without "
+        "uploading files. The result is persisted to history like any other "
+        "analysis."
+    ),
+    responses={
+        408: {"model": ErrorResponse, "description": "Analysis timed out"},
+        429: {"model": ErrorResponse, "description": "Rate limit exceeded"},
+        500: {"model": ErrorResponse, "description": "NLP pipeline failure"},
+    },
+)
+@limiter.limit(settings.analyze_rate_limit)
+async def analyze_sample(
+    request: Request,
+    response: Response,
+    session: AsyncSession = Depends(session_scope),
+) -> AnalysisResponse:
+    """Run the pipeline on the curated sample resume + job description."""
+    # Imported lazily so reportlab (a dev/test dependency) stays off the hot path.
+    from tests.fixtures import sample_jd_pdf, sample_resume_pdf
 
     logger.info(
-        "analysis_served",
-        extra={
-            "id": result.id,
-            "score": result.overall_score,
-            "grade": result.grade,
-            "duration_ms": result.nlp_metadata.processing_time_ms,
-            "persisted": want_persist,
-        },
+        "sample_analysis_requested",
+        extra={"client": request.client.host if request.client else "unknown"},
     )
-    return result
+    return await _run_pipeline(
+        request,
+        sample_resume_pdf(),
+        sample_jd_pdf(),
+        resume_name="john_doe_resume.pdf",
+        jd_name="senior_ml_engineer_jd.pdf",
+        session=session,
+        resume_content_type="application/pdf",
+        jd_content_type="application/pdf",
+    )
 
 
 __all__ = ["router"]

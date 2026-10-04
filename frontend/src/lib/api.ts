@@ -36,9 +36,9 @@ export async function analyzeSample(): Promise<AnalysisResponse> {
 
 export async function getHistory(
   page = 1,
-  limit = 10,
+  pageSize = 10,
 ): Promise<HistoryResponse> {
-  const res = await fetch(`/api/history?page=${page}&limit=${limit}`, {
+  const res = await fetch(`/api/history?page=${page}&page_size=${pageSize}`, {
     cache: "no-store",
   });
   return handle<HistoryResponse>(res);

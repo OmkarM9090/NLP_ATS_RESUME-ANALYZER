@@ -138,9 +138,12 @@ class TextCleaner:
             urls.append(value.lower())
             return " "
 
+        # Emails must be harvested before URLs/bare domains: otherwise the
+        # domain part of ``name@example.com`` is captured as a bare domain and
+        # the address itself is never recognised.
+        text = EMAIL_RE.sub(_replace_email, text)
         text = URL_RE.sub(_replace_url, text)
         text = BARE_DOMAIN_RE.sub(_replace_url, text)
-        text = EMAIL_RE.sub(_replace_email, text)
 
         # Phone detection runs after URLs/emails so their digits are gone.
         def _replace_phone(match: re.Match[str]) -> str:

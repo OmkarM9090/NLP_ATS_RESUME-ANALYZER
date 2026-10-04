@@ -300,6 +300,8 @@ class AnalysisService:
                 jd_unique_tokens=jd_processed.tokenized.unique_tokens,
                 resume_sentence_count=len(resume_processed.cleaned.sentences),
                 jd_sentence_count=len(jd_processed.cleaned.sentences),
+                resume_pages=resume_doc.page_count,
+                jd_pages=jd_doc.page_count,
                 processing_time_ms=round(elapsed_ms, 1),
                 models_used=self.registry.models_used(),
                 resume_extraction_method=resume_doc.extraction_method.value,
