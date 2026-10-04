@@ -336,6 +336,15 @@
     -webkit-tap-highlight-color: transparent;
     scrollbar-gutter: stable;
     background-color: var(--t-night);
+    /* Anchor jumps (e.g. /#features) land below the floating navbar at every
+       breakpoint — mirrors the per-section `scroll-mt` utilities. */
+    scroll-padding-top: 6rem;
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 7rem;
+    }
   }
 
   body {
@@ -578,6 +587,7 @@
     line-height: 1.7;
     color: var(--t-mist);
     letter-spacing: -0.004em;
+    text-wrap: pretty;
   }
 
   .display-1 {
@@ -894,6 +904,93 @@
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Safe-area padding for notched/home-indicator devices (used by fixed
+     overlays such as the mobile nav panel and the analysis loader). */
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+  .pt-safe {
+    padding-top: max(env(safe-area-inset-top), 0px);
+  }
+
+  /* Scroll containers that must never chain rubber-banding into the page. */
+  .overscroll-contain {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Remove the double-tap zoom delay on interactive controls without
+     disabling pinch-zoom on the page itself. */
+  .btn,
+  .chip,
+  a,
+  button,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+/* ============================================================================
+   Progressive-enhancement layouts
+
+   Two landing set-pieces switch from a plain vertical stack to a more
+   elaborate layout (horizontal pinned track / stacked card deck). That
+   switch is applied ONLY while their scroll animation is live — toggled via
+   a class from matchMedia-gated JS — so reduced-motion visitors, no-JS
+   contexts and small screens always get the safe, readable stack.
+   ========================================================================= */
+
+@media (min-width: 768px) {
+  /* How it works — horizontal pinned track */
+  .hiw--pinned .hiw-pinzone {
+    height: 100vh;
+    height: 100svh;
+  }
+  .hiw--pinned .hiw-stage {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    margin-top: 0;
+    transform: translateY(-40%);
+  }
+  .hiw--pinned .hiw-track {
+    flex-direction: row;
+    width: max-content;
+  }
+  .hiw--pinned .hiw-panel {
+    width: 80vw;
+    flex-shrink: 0;
+    padding-bottom: 0;
+  }
+  .hiw--pinned .hiw-rail {
+    display: flex;
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 1100px);
+    margin-top: 0;
+    padding-bottom: 0;
+  }
+
+  /* Testimonials — stacked deck needs a fixed-height stage */
+  .tst--stacked .tst-stack {
+    height: 330px;
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hiw--pinned .hiw-panel {
+    width: 62vw;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hiw--pinned .hiw-panel {
+    width: 54vw;
   }
 }
 

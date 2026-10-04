@@ -237,19 +237,19 @@ function ResultsInner() {
             )}
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="chip">
-                <FileText className="h-3 w-3 text-primary-2" strokeWidth={2.3} />
-                {result.resume_filename}
+              <span className="chip max-w-[min(78vw,320px)]">
+                <FileText className="h-3 w-3 shrink-0 text-primary-2" strokeWidth={2.3} />
+                <span className="truncate">{result.resume_filename}</span>
               </span>
               <span className="font-mono text-[11px] text-faint">×</span>
-              <span className="chip">
-                <FileText className="h-3 w-3 text-secondary" strokeWidth={2.3} />
-                {result.jd_filename}
+              <span className="chip max-w-[min(78vw,320px)]">
+                <FileText className="h-3 w-3 shrink-0 text-secondary" strokeWidth={2.3} />
+                <span className="truncate">{result.jd_filename}</span>
               </span>
             </div>
           </div>
 
-          <div className="text-right font-mono text-[10.5px] uppercase tracking-[0.14em] text-faint">
+          <div className="w-full shrink-0 font-mono text-[10.5px] uppercase tracking-[0.14em] text-faint sm:w-auto sm:text-right">
             <p>{formatDate(result.timestamp)}</p>
             <p className="mt-1">id {result.id.slice(0, 12)}</p>
             <p className="mt-1" style={{ color: accent }}>
@@ -275,7 +275,7 @@ function ResultsInner() {
         {/* -------------------------- sticky section nav ---------------- */}
         <nav
           data-enter
-          className="sticky top-[4.75rem] z-30 mt-12 flex items-center gap-1 rounded-full p-1.5 nav-shell"
+          className="sticky top-[4.5rem] z-30 mt-12 flex items-center gap-1 rounded-full p-1.5 nav-shell sm:top-[4.75rem]"
           aria-label="Report sections"
         >
           <div className="relative flex flex-1 items-center gap-0.5 overflow-x-auto hide-scrollbar">

@@ -25,17 +25,23 @@ export default function AnalysisLoader({
   const R = 34;
   const CIRC = 2 * Math.PI * R;
 
-  /* Animated progress arc + shimmering skeleton lines while open. */
+  /* Lock page scroll while the overlay is up — the report lands in a fresh
+     route right after, so the page underneath never needs to move. */
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const prev = root.style.overflow;
+    root.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = prev;
+    };
+  }, [open]);
+
+  /* Row stagger + shimmering skeleton — start once per open, never restart
+     while progress ticks. */
   useEffect(() => {
     if (!open) return;
     const ctx = gsap.context(() => {
-      gsap.set(".al-arc", { strokeDasharray: CIRC, strokeDashoffset: CIRC });
-      gsap.to(".al-arc", {
-        strokeDashoffset: CIRC * (1 - Math.max(progress, 4) / 100),
-        duration: 0.9,
-        ease: "power2.out",
-        overwrite: true,
-      });
       gsap.fromTo(
         ".al-row",
         { opacity: 0, x: -10 },
@@ -56,6 +62,18 @@ export default function AnalysisLoader({
       );
     });
     return () => ctx.revert();
+  }, [open]);
+
+  /* Progress arc — smoothly continues to each new value (the circle element
+     carries the initial full-offset dash state in markup). */
+  useEffect(() => {
+    if (!open) return;
+    gsap.to(".al-arc", {
+      strokeDashoffset: CIRC * (1 - Math.max(progress, 4) / 100),
+      duration: 0.9,
+      ease: "power2.out",
+      overwrite: true,
+    });
   }, [open, progress, CIRC]);
 
   return (
@@ -70,13 +88,13 @@ export default function AnalysisLoader({
           role="status"
           aria-live="polite"
         >
-          <motion.div
-            initial={{ scale: 0.94, y: 18, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.95, y: 10, opacity: 0 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="card relative w-[min(94vw,460px)] overflow-hidden rounded-3xl p-7 sm:p-8"
-          >
+        <motion.div
+          initial={{ scale: 0.94, y: 18, opacity: 0 }}
+          animate={{ scale: 1, y: 0, opacity: 1 }}
+          exit={{ scale: 0.95, y: 10, opacity: 0 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          className="card relative max-h-[calc(100dvh-2rem)] w-[min(94vw,460px)] overflow-y-auto overscroll-contain rounded-3xl p-6 sm:p-8"
+        >
             <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-[70px]" />
 
             <div className="relative flex items-center gap-5">
@@ -99,6 +117,8 @@ export default function AnalysisLoader({
                     stroke="url(#al-grad)"
                     strokeWidth="4"
                     strokeLinecap="round"
+                    strokeDasharray={CIRC}
+                    strokeDashoffset={CIRC}
                   />
                   <defs>
                     <linearGradient id="al-grad" x1="0" y1="0" x2="1" y2="1">

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Quote, Star } from "lucide-react";
 import { gsap } from "@/lib/gsap-config";
+import { revealOnScroll } from "@/lib/anim";
 import { SectionHeading } from "@/components/ui/primitives";
 
 const TESTIMONIALS = [
@@ -49,6 +50,9 @@ export default function TestimonialsSection() {
         const cards = gsap.utils.toArray<HTMLElement>(".tst-card", el);
         if (!wrap || !stage || !stack || cards.length < 3) return;
 
+        /* The fixed-height deck layout only exists while this class is on —
+           reduced-motion / no-JS keep the natural vertical column. */
+        el.classList.add("tst--stacked");
         wrap.style.height = "290vh";
         stage.classList.add("sticky", "top-0", "flex", "h-screen", "items-center");
         cards.forEach((c) => c.classList.add("absolute", "inset-x-0", "mx-auto"));
@@ -84,6 +88,7 @@ export default function TestimonialsSection() {
         return () => {
           tl.scrollTrigger?.kill();
           tl.kill();
+          el.classList.remove("tst--stacked");
           wrap.style.height = "";
           stage.classList.remove("sticky", "top-0", "flex", "h-screen", "items-center");
           cards.forEach((c) => {
@@ -94,13 +99,11 @@ export default function TestimonialsSection() {
       });
 
       mm.add("(max-width: 767px)", () => {
-        gsap.from(el.querySelectorAll(".tst-card"), {
+        revealOnScroll(el.querySelectorAll(".tst-card"), {
+          trigger: el,
           y: 44,
-          opacity: 0,
-          duration: 0.9,
           stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 76%", once: true },
+          start: "top 76%",
         });
       });
 
@@ -126,7 +129,7 @@ export default function TestimonialsSection() {
 
       <div className="tst-wrap relative mx-auto mt-14 max-w-4xl px-5 sm:px-8">
         <div className="tst-stage relative">
-          <div className="tst-stack relative flex flex-col items-center gap-6 md:h-[330px] md:block">
+          <div className="tst-stack relative flex flex-col items-center gap-6">
             {TESTIMONIALS.map((t) => (
               <figure
                 key={t.name}

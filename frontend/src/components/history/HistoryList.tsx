@@ -38,16 +38,24 @@ export default function HistoryList({ rows }: { rows: HistoryRow[] }) {
         const label = scoreLabel(r.overallScore).split(" ")[0];
         return (
           <li key={r.id} data-row>
-            <div className="card card-hover group flex items-center gap-4 rounded-2xl px-4 py-3.5 sm:px-5">
+            <div className="card card-hover group relative flex items-center gap-3.5 rounded-2xl px-4 py-3.5 sm:gap-4 sm:px-5">
+              {/* stretched link — the whole row is one tap target on every
+                  screen size, delete stays clickable above it */}
+              <Link
+                href={`/results?id=${r.id}`}
+                className="absolute inset-0 z-0 rounded-2xl"
+                aria-label={`Open analysis: ${r.resumeFilename} versus ${r.jdFilename}, score ${Math.round(r.overallScore)}`}
+              />
+
               <div
-                className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl"
+                className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl sm:h-14 sm:w-14"
                 style={{
                   background: `${color}12`,
                   boxShadow: `inset 0 0 0 1px ${color}40`,
                 }}
               >
                 <span
-                  className="font-mono text-[17px] font-bold leading-none tabular-nums"
+                  className="font-mono text-[15px] font-bold leading-none tabular-nums sm:text-[17px]"
                   style={{ color }}
                 >
                   {Math.round(r.overallScore)}
@@ -58,28 +66,28 @@ export default function HistoryList({ rows }: { rows: HistoryRow[] }) {
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-[14px] font-semibold tracking-[-0.01em] text-ink">
+                <p className="truncate font-display text-[13.5px] font-semibold tracking-[-0.01em] text-ink sm:text-[14px]">
                   {r.resumeFilename}
                   <span className="mx-2 font-mono text-[11px] font-normal text-faint">
                     vs
                   </span>
                   <span className="font-sans font-normal text-mist">{r.jdFilename}</span>
                 </p>
-                <p className="mt-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-faint">
+                <p className="mt-1.5 truncate font-mono text-[10px] uppercase tracking-[0.12em] text-faint sm:text-[10.5px]">
                   {formatDate(r.createdAt.toISOString())} · {r.grade} · id{" "}
                   {r.id.slice(0, 8)}
                 </p>
               </div>
 
-              <Link
-                href={`/results?id=${r.id}`}
-                className="hidden h-9 items-center gap-1.5 rounded-lg border border-line-ui px-3.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-mist transition-all duration-300 hover:border-line-ui-strong hover:text-ink sm:inline-flex"
-              >
+              <span className="hidden h-9 items-center gap-1.5 rounded-lg border border-line-ui px-3.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-mist transition-all duration-300 group-hover:border-line-ui-strong group-hover:text-ink sm:inline-flex">
                 open
-                <ArrowRight className="h-3 w-3" />
-              </Link>
+                <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-ink sm:hidden" />
 
-              <DeleteButton id={r.id} />
+              <span className="relative z-10 shrink-0">
+                <DeleteButton id={r.id} />
+              </span>
             </div>
           </li>
         );

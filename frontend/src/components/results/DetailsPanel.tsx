@@ -80,7 +80,7 @@ export function SectionAccordion({ sections }: { sections: SectionScores }) {
                 aria-expanded={isOpen}
                 className="flex w-full items-center gap-4 px-4 py-3.5 text-left"
               >
-                <span className="w-[104px] shrink-0 truncate font-display text-[13.5px] font-semibold capitalize">
+                <span className="w-[86px] shrink-0 truncate font-display text-[13.5px] font-semibold capitalize sm:w-[104px]">
                   {name}
                 </span>
                 <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-tint-3">

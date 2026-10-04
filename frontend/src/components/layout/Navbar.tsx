@@ -28,6 +28,7 @@ export default function Navbar() {
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const panelLinksRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   /* ------------------------- condensed-on-scroll shell ------------------- */
   useEffect(() => {
@@ -89,12 +90,37 @@ export default function Navbar() {
     moveIndicator(active);
   }, [pathname]);
 
+  /* Keep the indicator glued to its link through resizes / font-zoom. */
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const onResize = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const hovered = linksRef.current?.querySelector<HTMLElement>(
+          "a:hover, button:hover",
+        );
+        const active =
+          hovered ??
+          linksRef.current?.querySelector<HTMLElement>("[data-nav-active='true']");
+        moveIndicator(active ?? null);
+      }, 120);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", onResize);
+    };
+     
+  }, []);
+
   /* ------------------------------ mobile panel -------------------------- */
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
     if (open) {
       document.documentElement.style.overflow = "hidden";
+      // Move focus into the dialog so keyboard/sr users land somewhere sane.
+      window.setTimeout(() => closeBtnRef.current?.focus({ preventScroll: true }), 80);
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
       tl.set(panel, { display: "flex" })
         .fromTo(
@@ -132,6 +158,24 @@ export default function Navbar() {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  /* Close the mobile panel automatically when the viewport grows past the
+     breakpoint (rotation, tablet split-view, desktop resize) — otherwise the
+     page would stay scroll-locked behind a hidden dialog. Also keeps the
+     desktop hover indicator honest across resizes. */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => {
+      if (mq.matches) setOpen(false);
+      const active = linksRef.current?.querySelector<HTMLElement>(
+        "[data-nav-active='true']",
+      );
+      if (!active) moveIndicator(null);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+     
   }, []);
 
   return (
@@ -238,21 +282,24 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* mobile panel */}
+      {/* mobile panel — scrolls when the viewport is short (landscape
+          phones), stays vertically centred when there is room. */}
       <div
         ref={panelRef}
         style={{ display: "none" }}
-        className="fixed inset-0 z-[60] hidden flex-col bg-void/95 backdrop-blur-2xl md:!hidden"
+        className="fixed inset-0 z-[60] hidden flex-col overflow-y-auto overscroll-contain bg-void/95 backdrop-blur-2xl md:!hidden"
         role="dialog"
         aria-modal="true"
+        aria-label="Navigation menu"
       >
-        <div className="flex items-center justify-between px-5 py-5">
+        <div className="pt-safe flex shrink-0 items-center justify-between px-5 py-5">
           <span className="font-display text-[17px] font-bold tracking-[-0.03em]">
             Resume<span className="text-gradient-mint">AI</span>
           </span>
           <div className="flex items-center gap-1">
             <ThemeToggle className="h-10 w-10" />
             <button
+              ref={closeBtnRef}
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close navigation menu"
@@ -263,14 +310,17 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div ref={panelLinksRef} className="flex flex-1 flex-col justify-center gap-1 px-5">
+        <div
+          ref={panelLinksRef}
+          className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-1 px-5 pb-safe"
+        >
           {[...NAV_LINKS, { label: "Analyze my resume", href: "/analyze" }].map((link, i) => (
             <Link
               key={link.label}
               href={link.href}
               onClick={() => setOpen(false)}
               className={cn(
-                "flex items-center justify-between border-b border-line-soft py-5 font-display text-[26px] font-semibold tracking-[-0.03em] transition-colors",
+                "flex items-center justify-between border-b border-line-soft py-4 font-display text-[clamp(20px,5.4vh,26px)] font-semibold tracking-[-0.03em] transition-colors sm:py-5",
                 i === NAV_LINKS.length ? "text-secondary" : "text-ink hover:text-primary-2",
               )}
             >
@@ -278,7 +328,7 @@ export default function Navbar() {
               <ArrowUpRight className="h-5 w-5 opacity-40" />
             </Link>
           ))}
-          <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.3em] text-faint">
+          <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-faint sm:mt-8">
             nlp · tf-idf · semantic · taxonomy
           </p>
         </div>

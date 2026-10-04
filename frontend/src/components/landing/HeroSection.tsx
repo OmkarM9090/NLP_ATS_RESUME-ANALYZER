@@ -192,15 +192,15 @@ export default function HeroSection() {
       <div className="hero-inner mx-auto grid w-full max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,1fr)] lg:gap-12">
         {/* ------------------------------ copy ---------------------------- */}
         <div>
-          <div className="hero-eyebrow inline-flex items-center gap-2.5 rounded-full border border-line-soft bg-tint-2 py-1.5 pl-2 pr-3.5 backdrop-blur-sm">
+          <div className="hero-eyebrow inline-flex max-w-full flex-wrap items-center gap-x-2.5 gap-y-1 rounded-full border border-line-soft bg-tint-2 py-1.5 pl-2 pr-3.5 backdrop-blur-sm">
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/20">
               <Sparkles className="h-3 w-3 text-primary-2" strokeWidth={2.4} />
             </span>
-            <span className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-mist">
+            <span className="whitespace-nowrap font-mono text-[10.5px] uppercase tracking-[0.2em] text-mist">
               14-stage nlp pipeline
             </span>
             <span className="h-3 w-px bg-line-strong" />
-            <span className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-secondary">
+            <span className="whitespace-nowrap font-mono text-[10.5px] uppercase tracking-[0.2em] text-secondary">
               ~1s per pair
             </span>
           </div>
@@ -229,7 +229,7 @@ export default function HeroSection() {
               href="/analyze"
               size="lg"
               magnetic
-              className="hero-cta group"
+              className="hero-cta group max-sm:w-full"
             >
               Analyze my resume
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -238,7 +238,7 @@ export default function HeroSection() {
               href="/analyze?sample=1"
               variant="secondary"
               size="lg"
-              className="hero-cta group"
+              className="hero-cta group max-sm:w-full"
             >
               <PlayCircle className="h-4 w-4 text-secondary" strokeWidth={2.1} />
               Run the sample

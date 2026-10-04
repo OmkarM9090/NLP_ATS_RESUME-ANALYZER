@@ -36,26 +36,28 @@ export default function ScoreBreakdown({
 
     const ctx = gsap.context(() => {
       const rows = el.querySelectorAll("[data-sb-row]");
+      const fills = el.querySelectorAll("[data-sb-fill]");
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      if (reduced) {
+        gsap.set(rows, { opacity: 1, y: 0 });
+        gsap.set(fills, { scaleX: 1 });
+        return;
+      }
+
       gsap.set(rows, { opacity: 0, y: 16 });
-      gsap.set(el.querySelectorAll("[data-sb-fill]"), { scaleX: 0 });
+      gsap.set(fills, { scaleX: 0 });
 
       const tl = gsap.timeline({
         scrollTrigger: { trigger: el, start: "top 88%", once: true },
         defaults: { ease: "power3.out" },
       });
 
-      tl.to(rows, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07 });
-      if (!reduced) {
-        tl.to(
-          el.querySelectorAll("[data-sb-fill]"),
-          { scaleX: 1, duration: 1.1, stagger: 0.07 },
-          0.15,
-        );
-      } else {
-        gsap.set(el.querySelectorAll("[data-sb-fill]"), { scaleX: 1 });
-      }
+      tl.to(rows, { opacity: 1, y: 0, duration: 0.6, stagger: 0.07 }).to(
+        fills,
+        { scaleX: 1, duration: 1.1, stagger: 0.07 },
+        0.15,
+      );
     }, el);
 
     return () => ctx.revert();

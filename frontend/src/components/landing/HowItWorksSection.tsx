@@ -148,6 +148,11 @@ export default function HowItWorksSection() {
         const pinzone = el.querySelector<HTMLElement>(".hiw-pinzone");
         if (!track || !pinzone) return;
 
+        /* Flip the layout into horizontal-pinned mode BEFORE measuring —
+           the CSS only applies while this class is present, so the fallback
+           (reduced motion, no JS) stays a plain vertical stack. */
+        el.classList.add("hiw--pinned");
+
         const panels = gsap.utils.toArray<HTMLElement>(".hiw-panel", el);
         const dots = gsap.utils.toArray<HTMLElement>(".hiw-dot", el);
         const bar = el.querySelector<HTMLElement>(".hiw-rail-fill");
@@ -201,12 +206,19 @@ export default function HowItWorksSection() {
         return () => {
           tween.scrollTrigger?.kill();
           tween.kill();
+          el.classList.remove("hiw--pinned");
         };
       });
 
       mm.add("(max-width: 767px)", () => {
         const panels = gsap.utils.toArray<HTMLElement>(".hiw-panel", el);
         revealOnScroll(panels, { trigger: el, y: 40, stagger: 0.1, start: "top 82%" });
+      });
+
+      /* Reduced motion on desktop: no pin, just a calm reveal of the stack. */
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: reduce)", () => {
+        const panels = gsap.utils.toArray<HTMLElement>(".hiw-panel", el);
+        gsap.set(panels, { opacity: 1, clearProps: "transform" });
       });
 
       return () => mm.revert();
@@ -217,7 +229,7 @@ export default function HowItWorksSection() {
 
   return (
     <section ref={scope} id="how-it-works" className="relative scroll-mt-24">
-      <div className="hiw-pinzone relative overflow-hidden md:h-screen">
+      <div className="hiw-pinzone relative overflow-hidden">
         <div className="pointer-events-none absolute left-[-12%] top-[28%] h-[420px] w-[420px] rounded-full bg-glow-secondary blur-[150px]" />
         <div className="pointer-events-none absolute right-[-10%] top-[6%] h-[380px] w-[380px] rounded-full bg-glow-primary blur-[150px]" />
 
@@ -240,12 +252,12 @@ export default function HowItWorksSection() {
           </div>
         </div>
 
-        <div className="relative mt-10 md:absolute md:inset-x-0 md:top-1/2 md:mt-0 md:-translate-y-[40%]">
-          <div className="hiw-track flex flex-col md:w-max md:flex-row">
+        <div className="hiw-stage relative mt-10">
+          <div className="hiw-track flex flex-col">
             {STEPS.map((step) => (
               <div
                 key={step.num}
-                className="hiw-panel w-full shrink-0 px-5 pb-12 sm:px-8 md:w-[80vw] md:pb-0 lg:w-[62vw] xl:w-[54vw]"
+                className="hiw-panel w-full px-5 pb-12 sm:px-8"
               >
                 <div className="hiw-card card mx-auto max-w-2xl p-7 sm:p-9">
                   <div className="flex items-center justify-between">
@@ -271,7 +283,7 @@ export default function HowItWorksSection() {
           </div>
         </div>
 
-        <div className="relative mx-auto mt-2 flex max-w-7xl items-center gap-4 px-5 pb-16 sm:px-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:w-[min(92vw,1100px)] md:-translate-x-1/2 md:pb-0">
+        <div className="hiw-rail relative mx-auto mt-2 hidden max-w-7xl items-center gap-4 px-5 pb-16 sm:px-8">
           <span className="relative h-px flex-1 overflow-hidden bg-tint-4">
             <span className="hiw-rail-fill block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-primary to-primary-2" />
           </span>
