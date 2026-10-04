@@ -1,33 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cn } from "@/lib/utils";
 import { useMagneticEffect } from "@/hooks/useMagnetic";
+import { attachSpotlight, revealOnScroll } from "@/lib/anim";
 
-/* ------------------------------ Button ------------------------------ */
+/* ------------------------------------------------------------------ Button */
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "outline";
-type ButtonSize = "sm" | "md" | "lg";
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "danger";
+export type ButtonSize = "sm" | "md" | "lg";
 
-const btnBase =
-  "inline-flex items-center justify-center gap-2 rounded-xl font-display font-semibold tracking-tight transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-45 disabled:pointer-events-none select-none cursor-pointer";
-
-const btnVariants: Record<ButtonVariant, string> = {
-  primary:
-    "gradient-1 text-white shadow-[0_8px_30px_-6px_rgba(99,102,241,0.55)] hover:shadow-[0_12px_44px_-6px_rgba(99,102,241,0.75)] hover:-translate-y-0.5 active:translate-y-0",
-  secondary:
-    "bg-panel2 text-ink border border-line hover:border-primary/50 hover:bg-panel2/80 hover:-translate-y-0.5",
-  outline:
-    "border border-slate-500/40 text-ink hover:border-secondary/70 hover:text-secondary hover:-translate-y-0.5 backdrop-blur-sm",
-  ghost: "text-mist hover:text-ink hover:bg-white/5",
-  danger: "bg-danger/15 text-danger border border-danger/30 hover:bg-danger/25",
+const SIZES: Record<ButtonSize, string> = {
+  sm: "h-9 px-4 text-[13px]",
+  md: "h-11 px-5 text-[14px]",
+  lg: "h-[52px] px-7 text-[15px]",
 };
 
-const btnSizes: Record<ButtonSize, string> = {
-  sm: "h-9 px-4 text-sm",
-  md: "h-11 px-6 text-[15px]",
-  lg: "h-14 px-8 text-base",
+const VARIANTS: Record<ButtonVariant, string> = {
+  primary: "btn-primary",
+  secondary: "btn-secondary",
+  outline: "btn-outline",
+  ghost: "btn-ghost",
+  danger: "btn-danger",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -42,14 +47,14 @@ export function Button({
   magnetic = false,
   className,
   children,
-  ...props
+  ...rest
 }: ButtonProps) {
-  const magRef = useMagneticEffect<HTMLButtonElement>(0.25);
+  const magRef = useMagneticEffect<HTMLButtonElement>(0.18);
   return (
     <button
       ref={magnetic ? magRef : undefined}
-      className={cn(btnBase, btnVariants[variant], btnSizes[size], className)}
-      {...props}
+      className={cn("btn", VARIANTS[variant], SIZES[size], className)}
+      {...rest}
     >
       {children}
     </button>
@@ -63,6 +68,8 @@ export function LinkButton({
   magnetic = false,
   className,
   children,
+  external = false,
+  onClick,
 }: {
   href: string;
   variant?: ButtonVariant;
@@ -70,45 +77,24 @@ export function LinkButton({
   magnetic?: boolean;
   className?: string;
   children: ReactNode;
+  external?: boolean;
+  onClick?: () => void;
 }) {
-  const magRef = useMagneticEffect<HTMLAnchorElement>(0.25);
+  const magRef = useMagneticEffect<HTMLAnchorElement>(0.18);
   return (
     <Link
       href={href}
       ref={magnetic ? magRef : undefined}
-      className={cn(btnBase, btnVariants[variant], btnSizes[size], className)}
+      onClick={onClick}
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+      className={cn("btn", VARIANTS[variant], SIZES[size], className)}
     >
       {children}
     </Link>
   );
 }
 
-/* ------------------------------- Cards ------------------------------ */
-
-export function GlassCard({
-  className,
-  children,
-  hover = false,
-}: {
-  className?: string;
-  children: ReactNode;
-  hover?: boolean;
-}) {
-  return (
-    <div
-      className={cn(
-        "glass rounded-2xl",
-        hover &&
-          "transition-all duration-500 hover:border-primary/40 hover:bg-white/[0.045] hover:shadow-[0_20px_60px_-20px_rgba(99,102,241,0.35)]",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-}
-
-/* ------------------------------- Badge ------------------------------ */
+/* ------------------------------------------------------------------- Badge */
 
 export type BadgeTone =
   | "primary"
@@ -116,15 +102,17 @@ export type BadgeTone =
   | "success"
   | "warning"
   | "danger"
-  | "neutral";
+  | "neutral"
+  | "gold";
 
-const badgeTones: Record<BadgeTone, string> = {
-  primary: "bg-primary/15 text-indigo-300 border-primary/30",
-  secondary: "bg-secondary/15 text-cyan-300 border-secondary/30",
-  success: "bg-success/15 text-emerald-300 border-success/30",
-  warning: "bg-warning/15 text-amber-300 border-warning/30",
-  danger: "bg-danger/15 text-red-300 border-danger/30",
-  neutral: "bg-white/5 text-mist border-line",
+const TONES: Record<BadgeTone, string> = {
+  primary: "border-primary/30 bg-primary/12 text-primary-2",
+  secondary: "border-secondary/25 bg-secondary/10 text-secondary",
+  success: "border-success/25 bg-success/10 text-emerald-300",
+  warning: "border-warning/25 bg-warning/10 text-amber-300",
+  danger: "border-danger/25 bg-danger/10 text-red-300",
+  neutral: "border-white/[0.08] bg-white/[0.04] text-mist",
+  gold: "border-accent/25 bg-accent/10 text-accent",
 };
 
 export function Badge({
@@ -139,8 +127,8 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium leading-none",
-        badgeTones[tone],
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10.5px] font-medium leading-none tracking-tight",
+        TONES[tone],
         className,
       )}
     >
@@ -149,7 +137,107 @@ export function Badge({
   );
 }
 
-/* --------------------------- Gradient text -------------------------- */
+/* -------------------------------------------------------------------- Card */
+
+export function GlassCard({
+  className,
+  children,
+  hover = false,
+  spotlight = false,
+}: {
+  className?: string;
+  children: ReactNode;
+  hover?: boolean;
+  spotlight?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!spotlight || !ref.current) return;
+    return attachSpotlight(ref.current);
+  }, [spotlight]);
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "card relative",
+        hover && "card-hover",
+        spotlight && "spotlight",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------ Section title */
+
+export function SectionHeading({
+  kicker,
+  title,
+  description,
+  align = "center",
+  className,
+  children,
+}: {
+  kicker?: string;
+  title: ReactNode;
+  description?: string;
+  align?: "center" | "left";
+  className?: string;
+  children?: ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const targets = el.querySelectorAll("[data-reveal]");
+    if (!targets.length) return;
+    const tween = revealOnScroll(targets, {
+      trigger: el,
+      y: 28,
+      stagger: 0.1,
+      start: "top 86%",
+    });
+    return () => {
+      tween?.scrollTrigger?.kill();
+      tween?.kill();
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      data-reveal-group
+      className={cn(
+        "max-w-2xl",
+        align === "center" ? "mx-auto text-center" : "text-left",
+        className,
+      )}
+    >
+      {kicker && (
+        <p data-reveal className="eyebrow mb-4">
+          <span className="h-1 w-1 rounded-full bg-secondary" />
+          {kicker}
+        </p>
+      )}
+      <h2 data-reveal className="display-2">
+        {title}
+      </h2>
+      {description && (
+        <p data-reveal className="lede mt-5">
+          {description}
+        </p>
+      )}
+      {children}
+    </div>
+  );
+}
+
+/** Small helper so SectionHeading can kick off its own scroll reveal. */
 
 export function GradientText({
   className,
@@ -158,45 +246,36 @@ export function GradientText({
   className?: string;
   children: ReactNode;
 }) {
-  return <span className={cn("gradient-text", className)}>{children}</span>;
+  return <span className={cn("text-gradient", className)}>{children}</span>;
 }
 
-/* -------------------------- Section heading ------------------------- */
+/* ------------------------------------------------------------------ Eyebrow */
 
-export function SectionHeading({
-  kicker,
-  title,
-  description,
-  align = "center",
+export function Kicker({
+  children,
   className,
 }: {
-  kicker?: string;
-  title: ReactNode;
-  description?: string;
-  align?: "center" | "left";
+  children: ReactNode;
   className?: string;
 }) {
   return (
+    <p className={cn("eyebrow", className)}>
+      <span className="h-1 w-1 rounded-full bg-secondary" />
+      {children}
+    </p>
+  );
+}
+
+/* ---------------------------------------------------------------- Hairline */
+
+export function Hairline({ className }: { className?: string }) {
+  return (
     <div
+      aria-hidden
       className={cn(
-        "max-w-2xl",
-        align === "center" ? "mx-auto text-center" : "text-left",
+        "h-px w-full bg-gradient-to-r from-transparent via-white/[0.09] to-transparent",
         className,
       )}
-    >
-      {kicker && (
-        <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-secondary">
-          {kicker}
-        </p>
-      )}
-      <h2 className="font-display text-3xl font-semibold leading-[1.08] tracking-tight text-balance sm:text-4xl lg:text-5xl">
-        {title}
-      </h2>
-      {description && (
-        <p className="mt-5 text-base leading-relaxed text-mist sm:text-lg">
-          {description}
-        </p>
-      )}
-    </div>
+    />
   );
 }

@@ -80,7 +80,7 @@ export default function ResultsActions({ result }: { result: AnalysisResponse })
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            className="glass-strong absolute -top-12 rounded-lg px-3.5 py-2 font-mono text-xs text-success"
+            className="glass-strong absolute -top-12 rounded-xl px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-success"
           >
             Summary copied to clipboard
           </motion.div>

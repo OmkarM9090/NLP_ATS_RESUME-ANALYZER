@@ -98,6 +98,95 @@ Every fallback is observable, never silent:
 
 ---
 
+## Frontend
+
+Next.js 16 (App Router) + React 19 + Tailwind v4, with GSAP driving every motion
+and a small set of hand-built primitives instead of a component library.
+
+```
+frontend/src/
+├── app/
+│   ├── layout.tsx              fonts, ambient backdrop, navbar, footer, scroll progress
+│   ├── globals.css             design tokens, component classes, keyframes, reduced motion
+│   ├── page.tsx                landing composition (9 sections)
+│   ├── analyze/ results/ history/
+│   ├── not-found.tsx error.tsx branded 404 + route error boundary
+│   └── icon.svg                brand favicon
+├── components/
+│   ├── layout/                 Navbar (glossy shell + sliding indicator), Footer (live API
+│   │                           status), ScrollProgress (rAF reading bar)
+│   ├── landing/                HeroSection + MatchEngine, PipelineTicker, FeaturesSection,
+│   │                           HowItWorksSection, StatsSection, TestimonialsSection,
+│   │                           PricingSection, CTASection, Preloader
+│   ├── ui/                     primitives (Button/LinkButton/Badge/GlassCard/SectionHeading),
+│   │                           AnimatedCounter
+│   ├── analyze/                FileUploadZone, AnalysisLoader
+│   ├── results/                ScoreGauge, ScoreBreakdown, SkillsPanel, KeywordsPanel,
+│   │                           DetailsPanel, InsightsPanel, EntitiesPanel, ResultsActions
+│   └── history/                HistoryList, DeleteButton
+├── hooks/useMagnetic.ts        magnetic buttons + cursor parallax
+└── lib/
+    ├── gsap-config.ts          single GSAP entry point (ScrollTrigger + SplitText registered once)
+    ├── anim.ts                 shared primitives: splitText, revealText, revealOnScroll,
+    │                           attachSpotlight, attachTilt, scrambleText
+    ├── intro.ts                preloader → hero handoff (event based, not a guessed delay)
+    ├── api.ts                  client fetches (always relative /api/* → proxied)
+    └── analysis-store.ts       server-side history reads (RSC)
+```
+
+### Typography
+
+Three self-hosted **variable** fonts (latin subset, ~116 KB total, no third-party
+requests — works offline):
+
+| Role | Family | Used for |
+| --- | --- | --- |
+| Display | Plus Jakarta Sans | h1–h4, buttons, metric figures |
+| Interface | Inter | body copy, labels, forms |
+| Data | JetBrains Mono | kickers, scores, tables, pipeline labels, file metadata |
+
+Sizes are fluid (`display-1/2/3`, `lede`, `eyebrow` classes) so every section
+keeps the same rhythm from 360 px to 1920 px.
+
+### Palette
+
+Cool graphite neutrals (`night`, `panel`, `panel2`, `line`) carry the layout;
+colour is reserved for signal:
+
+| Token | Hex | Meaning |
+| --- | --- | --- |
+| `primary` / `primary-2` | `#6E56F8` / `#8D7BFF` | brand, primary actions |
+| `secondary` | `#24D3B4` | semantic/skill signal, live states |
+| `accent` | `#F0A868` | rare premium highlights |
+| `success` / `warning` / `danger` | `#34D399` / `#F4B860` / `#F87171` | score bands, gaps, errors |
+
+### Motion
+
+* `lib/gsap-config.ts` registers ScrollTrigger + SplitText once, client-side.
+* `lib/anim.ts` exposes the shared moves — masked word/line reveals, scroll
+  reveals, cursor spotlight, 3D tilt, decode scramble — all of them no-op under
+  `prefers-reduced-motion`.
+* **MatchEngine** (hero) is the signature animation: the job description is
+  scanned, its requirement chips are extracted and physically fly — along a
+  computed arc — into the resume card (matched) or the gap tray (missing), while
+  the score ring and the five weighted signals fill. Geometry is re-measured on
+  every loop and on resize, so it holds up at any breakpoint.
+* The preloader releases the hero timeline through `lib/intro.ts` instead of a
+  hard-coded delay, and the scroll lock is always released (with a 4.2 s safety
+  net).
+* `framer-motion` is kept only for enter/exit presence (loader overlay, upload
+  state swap, accordion, toast) where exit animations matter; every scroll,
+  text, card and hover animation is GSAP.
+
+### Frontend checks
+
+```bash
+cd frontend
+npm run typecheck   # tsc --noEmit
+npm run lint        # eslint
+npm run build       # production build
+```
+
 ## API
 
 | Method | Path | Description |
