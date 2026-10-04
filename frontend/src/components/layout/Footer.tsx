@@ -117,8 +117,8 @@ export default function Footer() {
       <div className="footer-rule absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-16 sm:px-8 sm:pt-20">
-        <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
-          <div data-footer-col>
+        <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+          <div data-footer-col className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5" aria-label="ResumeAI home">
               <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-[11px] bg-gradient-to-b from-primary to-primary-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]">
                 <ScanText className="h-[18px] w-[18px] text-white" strokeWidth={2.3} />

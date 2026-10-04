@@ -86,7 +86,12 @@ export default function CTASection() {
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <LinkButton href="/analyze" size="lg" magnetic className="cta-cta group">
+          <LinkButton
+            href="/analyze"
+            size="lg"
+            magnetic
+            className="cta-cta group max-sm:w-full"
+          >
             Analyze my resume
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </LinkButton>
@@ -94,7 +99,7 @@ export default function CTASection() {
             href="/analyze?sample=1"
             variant="secondary"
             size="lg"
-            className="cta-cta"
+            className="cta-cta max-sm:w-full"
           >
             <PlayCircle className="h-4 w-4 text-secondary" strokeWidth={2.1} />
             Try the sample pair

@@ -276,17 +276,30 @@ export default function MatchEngine({ className }: { className?: string }) {
       start();
     }
 
-    const onResize = () => {
+    const scheduleRebuild = () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        build();
-      }, 220);
+      resizeTimer = setTimeout(() => build(), 220);
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", scheduleRebuild);
+    window.addEventListener("orientationchange", scheduleRebuild);
+
+    /* Container-driven size changes (scrollbar appearing, parent reflow)
+       don't always fire a window resize — observe the stage itself. */
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(scheduleRebuild) : null;
+    if (ro) ro.observe(stage);
+
+    /* The flight path is measured once per build; a light/dark switch swaps
+       the palette tokens, so rebuild when the root class flips. */
+    const mo = new MutationObserver(() => scheduleRebuild());
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
     return () => {
       clearTimeout(resizeTimer);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", scheduleRebuild);
+      window.removeEventListener("orientationchange", scheduleRebuild);
+      ro?.disconnect();
+      mo.disconnect();
       ctx?.revert();
     };
   }, []);
@@ -300,16 +313,16 @@ export default function MatchEngine({ className }: { className?: string }) {
       )}
     >
       {/* window chrome */}
-      <div className="flex items-center gap-3 border-b border-line-soft px-4 py-3">
-        <div className="flex gap-1.5">
+      <div className="flex items-center gap-2.5 border-b border-line-soft px-3.5 py-3 sm:gap-3 sm:px-4">
+        <div className="flex shrink-0 gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-tint-4" />
           <span className="h-2.5 w-2.5 rounded-full bg-tint-4" />
           <span className="h-2.5 w-2.5 rounded-full bg-tint-4" />
         </div>
-        <p className="font-mono text-[10.5px] tracking-tight text-faint">
+        <p className="min-w-0 truncate font-mono text-[10.5px] tracking-tight text-faint">
           resume-vs-jd<span className="text-faint">.analysis</span>
         </p>
-        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-success ring-1 ring-success/25">
+        <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-success ring-1 ring-success/25">
           <span className="h-1 w-1 animate-pulse rounded-full bg-success" />
           live
         </span>
@@ -436,7 +449,7 @@ export default function MatchEngine({ className }: { className?: string }) {
           <div className="min-w-0 flex-1 space-y-[7px]">
             {SIGNALS.map((s) => (
               <div key={s.label} className="flex items-center gap-2">
-                <span className="w-[62px] shrink-0 truncate font-mono text-[9px] uppercase tracking-[0.08em] text-faint">
+                <span className="w-[52px] shrink-0 truncate font-mono text-[9px] uppercase tracking-[0.08em] text-faint sm:w-[62px]">
                   {s.label}
                 </span>
                 <span className="h-1 flex-1 overflow-hidden rounded-full bg-tint-3">
@@ -485,11 +498,11 @@ export default function MatchEngine({ className }: { className?: string }) {
       </div>
 
       {/* status line */}
-      <div className="flex items-center justify-between border-t border-line-soft px-4 py-2.5">
-        <p className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
+      <div className="flex items-center justify-between gap-3 border-t border-line-soft px-3.5 py-2.5 sm:px-4">
+        <p className="min-w-0 truncate font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
           scanning · extracting · matching
         </p>
-        <p className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
+        <p className="hidden shrink-0 font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint sm:block">
           pipeline · 14 stages
         </p>
       </div>

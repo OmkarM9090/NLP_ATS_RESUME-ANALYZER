@@ -16,6 +16,16 @@ if (typeof window !== "undefined") {
   gsap.defaults({ ease: "power3.out", duration: 0.9 });
   ScrollTrigger.config({ ignoreMobileResize: true });
   ScrollTrigger.defaults({ markers: false });
+
+  /* Pinned/scrubbed sections are measured from live DOM geometry. Fonts and
+     images that settle after first paint change that geometry, so re-measure
+     once everything is actually loaded — keeps every trigger aligned on slow
+     connections and on first visit. */
+  const refreshOnce = () => ScrollTrigger.refresh();
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(refreshOnce).catch(() => {});
+  }
+  window.addEventListener("load", refreshOnce);
 }
 
 export { gsap, ScrollTrigger, SplitText };

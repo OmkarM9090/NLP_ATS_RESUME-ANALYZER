@@ -56,20 +56,20 @@ export default function ResultsActions({ result }: { result: AnalysisResponse })
 
   return (
     <div className="relative flex flex-wrap items-center justify-center gap-3">
-      <Link href="/analyze">
-        <Button variant="primary" className="gap-2">
+      <Link href="/analyze" className="max-sm:w-full">
+        <Button variant="primary" className="gap-2 max-sm:w-full">
           <RotateCcw className="h-4 w-4" /> Analyze another pair
         </Button>
       </Link>
-      <Button variant="secondary" onClick={exportJson} className="gap-2">
+      <Button variant="secondary" onClick={exportJson} className="gap-2 max-sm:w-full">
         <Download className="h-4 w-4" /> Export JSON report
       </Button>
-      <Button variant="secondary" onClick={copySummary} className="gap-2">
+      <Button variant="secondary" onClick={copySummary} className="gap-2 max-sm:w-full">
         {copied ? <Check className="h-4 w-4 text-success" /> : <ClipboardCopy className="h-4 w-4" />}
         {copied ? "Copied" : "Copy summary"}
       </Button>
-      <Link href="/history">
-        <Button variant="ghost" className="gap-2">
+      <Link href="/history" className="max-sm:w-full">
+        <Button variant="ghost" className="gap-2 max-sm:w-full">
           <History className="h-4 w-4" /> View history
         </Button>
       </Link>

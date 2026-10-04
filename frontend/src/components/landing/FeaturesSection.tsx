@@ -46,7 +46,7 @@ function PipelineVisual() {
                   y1="3"
                   x2="16"
                   y2="3"
-                  stroke="rgba(139,124,255,0.5)"
+                  style={{ stroke: "color-mix(in oklab, var(--t-primary) 50%, transparent)" }}
                   strokeWidth="1.4"
                   strokeDasharray="3 3"
                   className="animate-dash-flow"
