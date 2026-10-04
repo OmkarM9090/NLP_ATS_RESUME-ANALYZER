@@ -38,7 +38,7 @@ function Chips({ items, empty }: { items: string[]; empty: string }) {
   return (
     <span className="flex flex-wrap gap-1.5">
       {items.map((x) => (
-        <span key={x} className="rounded-md border border-line bg-white/[0.03] px-2 py-0.5 text-xs">
+        <span key={x} className="rounded-md border border-line bg-tint-1 px-2 py-0.5 text-xs">
           {x}
         </span>
       ))}
@@ -56,7 +56,7 @@ export function EntitiesPanel({ entities }: { entities: EntityExtraction }) {
         <h3 className="mb-2 font-display text-[16px] font-semibold tracking-[-0.02em]">
           Detected on your resume
         </h3>
-        <div className="divide-y divide-white/[0.05]">
+        <div className="divide-y divide-line-soft">
           <Row icon={User} label="Candidate">
             {r.person ?? <span className="text-faint">Not confidently detected</span>}
           </Row>
@@ -108,7 +108,7 @@ export function EntitiesPanel({ entities }: { entities: EntityExtraction }) {
         <h3 className="mb-2 font-display text-[16px] font-semibold tracking-[-0.02em]">
           Extracted from the job posting
         </h3>
-        <div className="divide-y divide-white/[0.05]">
+        <div className="divide-y divide-line-soft">
           <Row icon={Building2} label="Company">
             {j.organization ?? <span className="text-mist/60">Not detected</span>}
           </Row>
@@ -127,7 +127,7 @@ export function EntitiesPanel({ entities }: { entities: EntityExtraction }) {
           </Row>
         </div>
 
-        <div className="mt-4 space-y-3 border-t border-white/[0.06] pt-4">
+        <div className="mt-4 space-y-3 border-t border-line-soft pt-4">
           <div>
             <p className="mb-2 font-mono text-[9.5px] uppercase tracking-[0.2em] text-faint">
               Required skills ({j.required_skills.length})
@@ -172,7 +172,7 @@ export function MetadataStrip({ meta }: { meta: NLPMetadata }) {
       </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {stats.map(([k, v]) => (
-          <div key={k} className="rounded-lg border border-white/[0.05] bg-white/[0.02] px-3 py-2.5">
+          <div key={k} className="rounded-lg border border-line-soft bg-tint-1 px-3 py-2.5">
             <p className="font-mono text-[14px] font-semibold tabular-nums text-ink">{v}</p>
             <p className="mt-0.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-faint">{k}</p>
           </div>

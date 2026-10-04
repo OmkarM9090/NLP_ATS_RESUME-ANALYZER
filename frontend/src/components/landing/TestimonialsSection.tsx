@@ -20,7 +20,7 @@ const TESTIMONIALS = [
     name: "Daniel K.",
     role: "Data Analyst → healthcare",
     initials: "DK",
-    tone: "from-secondary to-emerald-500",
+    tone: "from-emerald-500 to-teal-600",
   },
   {
     quote:
@@ -28,7 +28,7 @@ const TESTIMONIALS = [
     name: "Priya S.",
     role: "Career coach, 8 years",
     initials: "PS",
-    tone: "from-accent to-primary-2",
+    tone: "from-amber-500 to-orange-600",
   },
 ];
 
@@ -130,10 +130,10 @@ export default function TestimonialsSection() {
             {TESTIMONIALS.map((t) => (
               <figure
                 key={t.name}
-                className="tst-card card relative w-full max-w-2xl rounded-3xl p-7 shadow-[0_50px_110px_-50px_rgba(0,0,0,1)] sm:p-9"
+                className="tst-card card relative w-full max-w-2xl rounded-3xl p-7 shadow-float sm:p-9"
               >
                 <Quote
-                  className="absolute right-8 top-7 h-8 w-8 text-white/[0.06]"
+                  className="absolute right-8 top-7 h-8 w-8 text-ink/10"
                   strokeWidth={2}
                 />
                 <div className="flex gap-1">
@@ -144,7 +144,7 @@ export default function TestimonialsSection() {
                 <blockquote className="mt-5 text-[15.5px] leading-relaxed text-ink/90 sm:text-[17px]">
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
-                <figcaption className="mt-7 flex items-center gap-3.5 border-t border-white/[0.06] pt-5">
+                <figcaption className="mt-7 flex items-center gap-3.5 border-t border-line-soft pt-5">
                   <span
                     className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${t.tone} font-display text-[13px] font-bold text-white ring-1 ring-white/15`}
                   >

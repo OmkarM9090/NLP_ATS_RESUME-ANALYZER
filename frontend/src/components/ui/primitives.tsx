@@ -108,10 +108,10 @@ export type BadgeTone =
 const TONES: Record<BadgeTone, string> = {
   primary: "border-primary/30 bg-primary/12 text-primary-2",
   secondary: "border-secondary/25 bg-secondary/10 text-secondary",
-  success: "border-success/25 bg-success/10 text-emerald-300",
-  warning: "border-warning/25 bg-warning/10 text-amber-300",
-  danger: "border-danger/25 bg-danger/10 text-red-300",
-  neutral: "border-white/[0.08] bg-white/[0.04] text-mist",
+  success: "border-success/25 bg-success/10 text-success",
+  warning: "border-warning/25 bg-warning/10 text-warning",
+  danger: "border-danger/25 bg-danger/10 text-danger",
+  neutral: "border-line-soft bg-tint-2 text-mist",
   gold: "border-accent/25 bg-accent/10 text-accent",
 };
 
@@ -273,7 +273,7 @@ export function Hairline({ className }: { className?: string }) {
     <div
       aria-hidden
       className={cn(
-        "h-px w-full bg-gradient-to-r from-transparent via-white/[0.09] to-transparent",
+        "h-px w-full bg-gradient-to-r from-transparent via-line-strong to-transparent",
         className,
       )}
     />

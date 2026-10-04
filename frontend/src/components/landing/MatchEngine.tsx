@@ -46,6 +46,20 @@ export default function MatchEngine({ className }: { className?: string }) {
     const layer = layerRef.current;
     if (!stage || !layer) return;
 
+    /* Palette read from the active theme's tokens — the motion itself is
+       untouched, it just inherits the current mode. */
+    const readTokens = () => {
+      const cs = getComputedStyle(document.documentElement);
+      const get = (name: string, fallback: string) =>
+        cs.getPropertyValue(name).trim() || fallback;
+      return {
+        line: get("--t-me-line", "rgba(255,255,255,0.07)"),
+        lineActive: get("--t-me-line-active", "rgba(126,231,211,0.45)"),
+        bullet: get("--t-me-bullet", "rgba(255,255,255,0.16)"),
+      };
+    };
+    let token = readTokens();
+
     const chips = Array.from(stage.querySelectorAll<HTMLElement>("[data-chip]"));
     const bullets = Array.from(stage.querySelectorAll<HTMLElement>("[data-bullet]"));
     const bars = Array.from(stage.querySelectorAll<HTMLElement>("[data-bar-fill]"));
@@ -117,6 +131,7 @@ export default function MatchEngine({ className }: { className?: string }) {
     };
 
     const build = () => {
+      token = readTokens();
       const frames = layout().filter(Boolean) as NonNullable<ReturnType<typeof layout>[number]>[];
       if (!frames.length) return;
 
@@ -149,7 +164,7 @@ export default function MatchEngine({ className }: { className?: string }) {
           .set(bullets, { scaleX: 0.5, opacity: 0.45 }, 0)
           .set(bars, { scaleX: 0 }, 0)
           .set(values, { textContent: "0" }, 0)
-          .set(".me-jd-line", { backgroundColor: "rgba(255,255,255,0.07)" }, 0)
+          .set(".me-jd-line", { backgroundColor: token.line }, 0)
           .add(() => setScore(0), 0);
 
         /* 1 · the JD gets scanned --------------------------------------- */
@@ -164,7 +179,7 @@ export default function MatchEngine({ className }: { className?: string }) {
           .to(
             ".me-jd-line",
             {
-              backgroundColor: "rgba(126,231,211,0.45)",
+              backgroundColor: token.lineActive,
               stagger: 0.08,
               duration: 0.22,
             },
@@ -173,7 +188,7 @@ export default function MatchEngine({ className }: { className?: string }) {
           .to(
             ".me-jd-line",
             {
-              backgroundColor: "rgba(255,255,255,0.07)",
+              backgroundColor: token.line,
               stagger: 0.08,
               duration: 0.5,
             },
@@ -213,7 +228,7 @@ export default function MatchEngine({ className }: { className?: string }) {
             {
               scaleX: 1,
               opacity: 1,
-              backgroundColor: "rgba(255,255,255,0.16)",
+              backgroundColor: token.bullet,
               duration: 0.6,
             },
             1.9 + i * 0.26,
@@ -280,19 +295,19 @@ export default function MatchEngine({ className }: { className?: string }) {
     <div
       ref={stageRef}
       className={cn(
-        "relative overflow-hidden rounded-[22px] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(20,23,32,0.9),rgba(9,11,16,0.92))] shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_50px_120px_-40px_rgba(0,0,0,1)] backdrop-blur-xl",
+        "engine-shell relative overflow-hidden rounded-[18px]",
         className,
       )}
     >
       {/* window chrome */}
-      <div className="flex items-center gap-3 border-b border-white/[0.06] px-4 py-3">
+      <div className="flex items-center gap-3 border-b border-line-soft px-4 py-3">
         <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
-          <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
+          <span className="h-2.5 w-2.5 rounded-full bg-tint-4" />
+          <span className="h-2.5 w-2.5 rounded-full bg-tint-4" />
+          <span className="h-2.5 w-2.5 rounded-full bg-tint-4" />
         </div>
         <p className="font-mono text-[10.5px] tracking-tight text-faint">
-          resume-vs-jd<span className="text-white/20">.analysis</span>
+          resume-vs-jd<span className="text-faint">.analysis</span>
         </p>
         <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-success/10 px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-success ring-1 ring-success/25">
           <span className="h-1 w-1 animate-pulse rounded-full bg-success" />
@@ -303,7 +318,7 @@ export default function MatchEngine({ className }: { className?: string }) {
       <div className="relative p-3.5 sm:p-4">
         <div className="grid grid-cols-2 gap-3">
           {/* ------------------------------ RESUME ------------------------ */}
-          <div className="relative rounded-xl border border-white/[0.06] bg-void/50 p-3">
+          <div className="relative rounded-xl border border-line-soft bg-void/50 p-3">
             <div className="mb-3 flex items-center gap-1.5">
               <FileText className="h-3 w-3 text-primary-2" strokeWidth={2.2} />
               <span className="truncate font-mono text-[9.5px] uppercase tracking-[0.14em] text-mist">
@@ -316,7 +331,7 @@ export default function MatchEngine({ className }: { className?: string }) {
                 <span
                   key={i}
                   data-bullet
-                  className="block h-1.5 rounded-full bg-white/[0.07]"
+                  className="block h-1.5 rounded-full bg-tint-3"
                   style={{ width: `${w}%` }}
                 />
               ))}
@@ -330,7 +345,7 @@ export default function MatchEngine({ className }: { className?: string }) {
                 <span
                   key={k.text}
                   data-target={k.text}
-                  className="block h-5 rounded-md border border-dashed border-white/[0.09]"
+                  className="block h-5 rounded-md border border-dashed border-line-soft"
                 />
               ))}
             </div>
@@ -343,14 +358,14 @@ export default function MatchEngine({ className }: { className?: string }) {
                 <span
                   key={k.text}
                   data-gap={k.text}
-                  className="block h-5 rounded-md border border-dashed border-white/[0.09]"
+                  className="block h-5 rounded-md border border-dashed border-line-soft"
                 />
               ))}
             </div>
           </div>
 
           {/* --------------------------- JOB DESCRIPTION ------------------ */}
-          <div className="relative overflow-hidden rounded-xl border border-white/[0.06] bg-void/50 p-3">
+          <div className="relative overflow-hidden rounded-xl border border-line-soft bg-void/50 p-3">
             <div className="mb-3 flex items-center gap-1.5">
               <ScanLine className="h-3 w-3 text-secondary" strokeWidth={2.2} />
               <span className="truncate font-mono text-[9.5px] uppercase tracking-[0.14em] text-mist">
@@ -362,12 +377,12 @@ export default function MatchEngine({ className }: { className?: string }) {
               {[92, 66, 84, 74, 58].map((w, i) => (
                 <span
                   key={i}
-                  className="me-jd-line block h-1.5 rounded-full bg-white/[0.07]"
+                  className="me-jd-line block h-1.5 rounded-full bg-tint-3"
                   style={{ width: `${w}%` }}
                 />
               ))}
               {/* scan beam */}
-              <span className="me-beam pointer-events-none absolute inset-x-[-10px] top-0 h-6 rounded-full bg-[linear-gradient(180deg,transparent,rgba(36,211,180,0.22),transparent)] ring-1 ring-secondary/25" />
+              <span className="me-beam pointer-events-none absolute inset-x-[-10px] top-0 h-6 rounded-full bg-[linear-gradient(180deg,transparent,var(--t-glow-primary),transparent)] ring-1 ring-primary/25" />
             </div>
 
             <p className="mb-2 mt-4 font-mono text-[8.5px] uppercase tracking-[0.2em] text-faint">
@@ -378,7 +393,7 @@ export default function MatchEngine({ className }: { className?: string }) {
                 <span
                   key={k.text}
                   data-home={k.text}
-                  className="h-5 rounded-md border border-dashed border-white/[0.09]"
+                  className="h-5 rounded-md border border-dashed border-line-soft"
                   style={{ width: k.w }}
                 />
               ))}
@@ -387,10 +402,10 @@ export default function MatchEngine({ className }: { className?: string }) {
         </div>
 
         {/* ------------------------------- signals ------------------------ */}
-        <div className="mt-3 flex items-center gap-3 rounded-xl border border-white/[0.06] bg-void/50 p-3">
+        <div className="mt-3 flex items-center gap-3 rounded-xl border border-line-soft bg-void/50 p-3">
           <div className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center">
             <svg viewBox="0 0 52 52" className="h-full w-full -rotate-90">
-              <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
+              <circle cx="26" cy="26" r="21" fill="none" className="stroke-track" strokeWidth="4" />
               <circle
                 ref={ringRef}
                 cx="26"
@@ -405,8 +420,8 @@ export default function MatchEngine({ className }: { className?: string }) {
               />
               <defs>
                 <linearGradient id="me-ring" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#8D7BFF" />
-                  <stop offset="100%" stopColor="#24D3B4" />
+                  <stop offset="0%" style={{ stopColor: "var(--t-primary-2)" }} />
+                  <stop offset="100%" style={{ stopColor: "var(--t-primary)" }} />
                 </linearGradient>
               </defs>
             </svg>
@@ -424,11 +439,11 @@ export default function MatchEngine({ className }: { className?: string }) {
                 <span className="w-[62px] shrink-0 truncate font-mono text-[9px] uppercase tracking-[0.08em] text-faint">
                   {s.label}
                 </span>
-                <span className="h-1 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+                <span className="h-1 flex-1 overflow-hidden rounded-full bg-tint-3">
                   <span
                     data-bar-fill
                     data-score={s.value}
-                    className="block h-full origin-left rounded-full bg-gradient-to-r from-primary-2 to-secondary"
+                    className="block h-full origin-left rounded-full bg-gradient-to-r from-primary to-primary-2"
                     style={{ width: `${s.value}%`, transform: "scaleX(0)" }}
                   />
                 </span>
@@ -455,8 +470,8 @@ export default function MatchEngine({ className }: { className?: string }) {
             className={cn(
               "absolute left-0 top-0 inline-flex h-5 items-center justify-center gap-1 overflow-hidden rounded-md px-1.5 font-mono text-[9.5px] font-medium tracking-tight",
               k.matched
-                ? "bg-success/[0.14] text-emerald-200 ring-1 ring-success/30"
-                : "bg-warning/[0.14] text-amber-200 ring-1 ring-warning/30",
+                ? "bg-success/[0.14] text-success ring-1 ring-success/30"
+                : "bg-warning/[0.14] text-warning ring-1 ring-warning/30",
             )}
           >
             {k.matched ? (
@@ -470,7 +485,7 @@ export default function MatchEngine({ className }: { className?: string }) {
       </div>
 
       {/* status line */}
-      <div className="flex items-center justify-between border-t border-white/[0.06] px-4 py-2.5">
+      <div className="flex items-center justify-between border-t border-line-soft px-4 py-2.5">
         <p className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
           scanning · extracting · matching
         </p>

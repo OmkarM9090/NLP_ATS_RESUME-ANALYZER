@@ -112,15 +112,15 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={scope} className="relative overflow-hidden border-t border-white/[0.06]">
-      <div className="pointer-events-none absolute inset-x-0 -top-40 h-80 bg-[radial-gradient(ellipse_50%_100%_at_50%_100%,rgba(110,86,248,0.14),transparent)]" />
+    <footer ref={scope} className="relative overflow-hidden border-t border-line-soft">
+      <div className="pointer-events-none absolute inset-x-0 -top-40 h-80 ambient-bottom" />
       <div className="footer-rule absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-5 pb-10 pt-16 sm:px-8 sm:pt-20">
         <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
           <div data-footer-col>
             <Link href="/" className="flex items-center gap-2.5" aria-label="ResumeAI home">
-              <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-[11px] bg-gradient-to-b from-primary-2 to-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
+              <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-[11px] bg-gradient-to-b from-primary to-primary-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]">
                 <ScanText className="h-[18px] w-[18px] text-white" strokeWidth={2.3} />
               </span>
               <span className="font-display text-[17px] font-bold tracking-[-0.03em]">
@@ -141,14 +141,14 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.03] text-mist ring-1 ring-white/[0.07] transition-all duration-300 hover:-translate-y-0.5 hover:text-ink hover:ring-white/20"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-tint-1 text-mist ring-1 ring-line-soft transition-all duration-300 hover:-translate-y-0.5 hover:text-ink hover:ring-line-strong"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
 
-            <div className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-white/[0.03] px-3 py-1.5 ring-1 ring-white/[0.07]">
+            <div className="mt-6 inline-flex items-center gap-2.5 rounded-full bg-tint-1 px-3 py-1.5 ring-1 ring-line-soft">
               <span className="relative flex h-1.5 w-1.5">
                 <span
                   className={
@@ -204,7 +204,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-6 sm:flex-row">
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-line-soft pt-6 sm:flex-row">
           <p className="text-[12.5px] text-faint">
             © {new Date().getFullYear()} ResumeAI · Resumes are analyzed in request
             scope and never shared.

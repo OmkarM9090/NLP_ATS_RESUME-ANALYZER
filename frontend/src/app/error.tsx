@@ -22,7 +22,7 @@ export default function Error({
 
   return (
     <main className="relative flex min-h-screen items-center justify-center px-5 py-32 sm:px-8">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_55%_100%_at_50%_0%,rgba(248,113,113,0.12),transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] ambient-top" />
 
       <div className="card relative w-full max-w-xl overflow-hidden rounded-3xl p-9 text-center sm:p-12">
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/10 ring-1 ring-danger/25">
@@ -42,7 +42,7 @@ export default function Error({
         </p>
 
         {error.message && (
-          <p className="mx-auto mt-5 max-w-md truncate rounded-xl border border-white/[0.06] bg-void/50 px-3.5 py-2.5 font-mono text-[11px] text-faint">
+          <p className="mx-auto mt-5 max-w-md truncate rounded-xl border border-line-soft bg-void/50 px-3.5 py-2.5 font-mono text-[11px] text-faint">
             {error.message}
           </p>
         )}

@@ -88,7 +88,7 @@ export default function ScoreGauge({ score }: { score: number }) {
             cy="104"
             r={R}
             fill="none"
-            stroke="rgba(255,255,255,0.07)"
+            className="stroke-track"
             strokeWidth="10"
           />
           <circle

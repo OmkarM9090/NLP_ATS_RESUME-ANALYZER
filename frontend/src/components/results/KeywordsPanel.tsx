@@ -64,8 +64,8 @@ export default function KeywordsPanel({ keywords }: { keywords: JDKeyword[] }) {
               className={cn(
                 "cursor-default rounded-lg border px-2.5 py-1 font-medium leading-tight transition-transform duration-300 hover:scale-105",
                 k.found_in_resume
-                  ? "border-success/25 bg-success/[0.07] text-emerald-300"
-                  : "border-danger/25 bg-danger/[0.07] text-red-300",
+                  ? "border-success/25 bg-success/[0.07] text-success"
+                  : "border-danger/25 bg-danger/[0.07] text-danger",
               )}
             >
               {k.keyword}
@@ -74,7 +74,7 @@ export default function KeywordsPanel({ keywords }: { keywords: JDKeyword[] }) {
         })}
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-6 border-t border-white/[0.06] pt-4">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-6 border-t border-line-soft pt-4">
         {[
           { c: "bg-success", label: "present in resume" },
           { c: "bg-danger", label: "missing" },

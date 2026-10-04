@@ -39,7 +39,7 @@ export default async function HistoryPage({
 
   return (
     <main className="relative min-h-screen px-5 pb-24 pt-28 sm:px-8 lg:pt-32">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[400px] bg-[radial-gradient(ellipse_55%_100%_at_50%_0%,rgba(110,86,248,0.13),transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[400px] ambient-top" />
 
       <div className="relative mx-auto max-w-4xl">
         <header className="flex flex-wrap items-end justify-between gap-5">
@@ -74,7 +74,7 @@ export default async function HistoryPage({
           </div>
         ) : rows.length === 0 ? (
           <div className="card mt-12 flex flex-col items-center rounded-3xl px-8 py-16 text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08]">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-tint-2 ring-1 ring-line-soft">
               <HistoryIcon className="h-6 w-6 text-faint" strokeWidth={1.8} />
             </span>
             <h2 className="mt-6 font-display text-[19px] font-semibold tracking-[-0.02em]">
@@ -100,7 +100,7 @@ export default async function HistoryPage({
               <p className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-faint">
                 {total} report{total === 1 ? "" : "s"} · page {page} of {pages}
               </p>
-              <span className="h-px flex-1 bg-gradient-to-r from-white/[0.1] to-transparent" />
+              <span className="h-px flex-1 bg-gradient-to-r from-line-strong to-transparent" />
             </div>
 
             <HistoryList rows={rows} />

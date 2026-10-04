@@ -50,11 +50,11 @@ export function GapsPanel({ gaps }: { gaps: GapAnalysis }) {
               {gaps.missing_keywords.map((k) => (
                 <span
                   key={k.keyword}
-                  className="rounded-md border border-danger/25 bg-danger/[0.08] px-2 py-1 font-mono text-[11px] text-red-300"
+                  className="rounded-md border border-danger/25 bg-danger/[0.08] px-2 py-1 font-mono text-[11px] text-danger"
                   title={`Appears ${k.occurrences}× in the job description`}
                 >
                   {k.keyword}
-                  <span className="ml-1.5 text-red-400/60">×{k.occurrences}</span>
+                  <span className="ml-1.5 text-danger/60">×{k.occurrences}</span>
                 </span>
               ))}
             </div>
@@ -73,8 +73,8 @@ export function GapsPanel({ gaps }: { gaps: GapAnalysis }) {
                   className={cn(
                     "rounded-md border px-2 py-1 font-mono text-[11px]",
                     s.importance === "high"
-                      ? "border-danger/25 bg-danger/[0.08] text-red-300"
-                      : "border-warning/25 bg-warning/[0.08] text-amber-300",
+                      ? "border-danger/25 bg-danger/[0.08] text-danger"
+                      : "border-warning/25 bg-warning/[0.08] text-warning",
                   )}
                 >
                   {s.skill}
@@ -109,13 +109,13 @@ export function GapsPanel({ gaps }: { gaps: GapAnalysis }) {
         {(gaps.experience_gap || gaps.education_gap) && (
           <div className="space-y-2.5" data-gap-block>
             {gaps.experience_gap && (
-              <div className="flex items-start gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-[12.5px] leading-relaxed text-mist">
+              <div className="flex items-start gap-2.5 rounded-lg border border-line-soft bg-tint-1 px-3 py-2.5 text-[12.5px] leading-relaxed text-mist">
                 <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
                 {gaps.experience_gap}
               </div>
             )}
             {gaps.education_gap && (
-              <div className="flex items-start gap-2.5 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-[12.5px] leading-relaxed text-mist">
+              <div className="flex items-start gap-2.5 rounded-lg border border-line-soft bg-tint-1 px-3 py-2.5 text-[12.5px] leading-relaxed text-mist">
                 <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-secondary" />
                 {gaps.education_gap}
               </div>
@@ -144,19 +144,19 @@ const PRI_STYLE: Record<
 > = {
   high: {
     icon: Flame,
-    chip: "bg-danger/15 text-red-300 border-danger/30",
+    chip: "bg-danger/15 text-danger border-danger/30",
     border: "border-l-danger",
     label: "high priority",
   },
   medium: {
     icon: Zap,
-    chip: "bg-warning/15 text-amber-300 border-warning/30",
+    chip: "bg-warning/15 text-warning border-warning/30",
     border: "border-l-warning",
     label: "medium",
   },
   low: {
     icon: Info,
-    chip: "bg-secondary/15 text-cyan-300 border-secondary/30",
+    chip: "bg-secondary/15 text-secondary border-secondary/30",
     border: "border-l-secondary",
     label: "low",
   },
@@ -199,7 +199,7 @@ export function RecommendationsPanel({ recs }: { recs: Recommendation[] }) {
               key={i}
               data-rec
               className={cn(
-                "rounded-xl border border-white/[0.06] border-l-2 bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/[0.12]",
+                "rounded-xl border border-line-soft border-l-2 bg-tint-1 p-4 transition-colors duration-300 hover:border-line-ui",
                 P.border,
               )}
             >

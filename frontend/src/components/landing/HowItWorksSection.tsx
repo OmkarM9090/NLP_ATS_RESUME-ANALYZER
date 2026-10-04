@@ -59,7 +59,7 @@ function UploadVisual() {
             </span>
           </div>
           <p className="mt-3 truncate font-mono text-[10.5px] text-mist">{f.name}</p>
-          <span className="mt-3 block h-1 overflow-hidden rounded-full bg-white/[0.07]">
+          <span className="mt-3 block h-1 overflow-hidden rounded-full bg-tint-3">
             <span
               className={cn(
                 "block h-full w-full rounded-full",
@@ -89,7 +89,7 @@ function PipelineVisual() {
       {stages.map((s, i) => (
         <div
           key={s.label}
-          className="rounded-lg border border-white/[0.06] bg-void/40 px-3 py-2.5"
+          className="rounded-lg border border-line-soft bg-void/40 px-3 py-2.5"
           style={{ opacity: 1 - i * 0.06 }}
         >
           <p className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
@@ -104,8 +104,8 @@ function PipelineVisual() {
 
 function ReportVisual() {
   const rows = [
-    { label: "Keyword match", value: 78, color: "#8D7BFF" },
-    { label: "Semantic similarity", value: 86, color: "#24D3B4" },
+    { label: "Keyword match", value: 78, color: "#3B82F6" },
+    { label: "Semantic similarity", value: 86, color: "#22D3EE" },
     { label: "Skill match", value: 81, color: "#34D399" },
     { label: "ATS formatting", value: 92, color: "#F0A868" },
   ];
@@ -119,7 +119,7 @@ function ReportVisual() {
             </span>
             <span className="font-mono text-[11px] tabular-nums text-mist">{r.value}</span>
           </div>
-          <span className="block h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+          <span className="block h-1.5 overflow-hidden rounded-full bg-tint-3">
             <span
               className="block h-full w-full origin-left rounded-full"
               style={{ background: r.color, transform: `scaleX(${r.value / 100})` }}
@@ -218,8 +218,8 @@ export default function HowItWorksSection() {
   return (
     <section ref={scope} id="how-it-works" className="relative scroll-mt-24">
       <div className="hiw-pinzone relative overflow-hidden md:h-screen">
-        <div className="pointer-events-none absolute left-[-12%] top-[28%] h-[420px] w-[420px] rounded-full bg-secondary/[0.07] blur-[150px]" />
-        <div className="pointer-events-none absolute right-[-10%] top-[6%] h-[380px] w-[380px] rounded-full bg-primary/[0.12] blur-[150px]" />
+        <div className="pointer-events-none absolute left-[-12%] top-[28%] h-[420px] w-[420px] rounded-full bg-glow-secondary blur-[150px]" />
+        <div className="pointer-events-none absolute right-[-10%] top-[6%] h-[380px] w-[380px] rounded-full bg-glow-primary blur-[150px]" />
 
         <div className="relative mx-auto max-w-7xl px-5 pt-24 sm:px-8 md:pt-28">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -249,7 +249,7 @@ export default function HowItWorksSection() {
               >
                 <div className="hiw-card card mx-auto max-w-2xl p-7 sm:p-9">
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-b from-white/[0.09] to-white/[0.02] ring-1 ring-white/[0.09]">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-b from-tint-4 to-tint-1 ring-1 ring-line-soft">
                       <step.icon className="h-5 w-5 text-ink/85" strokeWidth={1.9} />
                     </span>
                     <span className="font-mono text-[11px] tracking-[0.2em] text-faint">
@@ -272,14 +272,14 @@ export default function HowItWorksSection() {
         </div>
 
         <div className="relative mx-auto mt-2 flex max-w-7xl items-center gap-4 px-5 pb-16 sm:px-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:w-[min(92vw,1100px)] md:-translate-x-1/2 md:pb-0">
-          <span className="relative h-px flex-1 overflow-hidden bg-white/[0.09]">
-            <span className="hiw-rail-fill block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-primary-2 to-secondary" />
+          <span className="relative h-px flex-1 overflow-hidden bg-tint-4">
+            <span className="hiw-rail-fill block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-primary to-primary-2" />
           </span>
           <div className="flex items-center gap-2">
             {STEPS.map((s) => (
               <span
                 key={s.num}
-                className="hiw-dot h-1.5 w-5 rounded-full bg-white/12 transition-all duration-500 [&.is-active]:w-9 [&.is-active]:bg-gradient-to-r [&.is-active]:from-primary-2 [&.is-active]:to-secondary"
+                className="hiw-dot h-1.5 w-5 rounded-full bg-tint-4 transition-all duration-500 [&.is-active]:w-9 [&.is-active]:bg-primary"
               />
             ))}
           </div>

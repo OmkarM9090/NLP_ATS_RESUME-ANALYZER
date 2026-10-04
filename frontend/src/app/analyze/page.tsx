@@ -138,7 +138,7 @@ function AnalyzePageInner() {
       ref={scope}
       className="relative min-h-screen px-5 pb-24 pt-28 sm:px-8 lg:pt-32"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(110,86,248,0.14),transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] ambient-top" />
 
       <div className="relative mx-auto max-w-6xl">
         <header className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
@@ -160,7 +160,7 @@ function AnalyzePageInner() {
           <Link
             href="/history"
             data-reveal
-            className="group inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-mist transition-all duration-300 hover:border-white/[0.16] hover:text-ink"
+            className="group inline-flex items-center gap-2 rounded-xl border border-line-ui bg-tint-1 px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-mist transition-all duration-300 hover:border-line-ui-strong hover:text-ink"
           >
             history
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -315,7 +315,7 @@ function AnalyzePageInner() {
             <ul className="mt-5 space-y-4">
               {PIPELINE_FACTS.map(({ icon: Icon, text }) => (
                 <li key={text} className="flex gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/[0.05] ring-1 ring-white/[0.08]">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-tint-2 ring-1 ring-line-soft">
                     <Icon className="h-3.5 w-3.5 text-mist" strokeWidth={2} />
                   </span>
                   <span className="text-[12.5px] leading-relaxed text-mist">{text}</span>
@@ -323,7 +323,7 @@ function AnalyzePageInner() {
               ))}
             </ul>
 
-            <div className="mt-6 border-t border-white/[0.06] pt-5">
+            <div className="mt-6 border-t border-line-soft pt-5">
               <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
                 scoring weights
               </p>

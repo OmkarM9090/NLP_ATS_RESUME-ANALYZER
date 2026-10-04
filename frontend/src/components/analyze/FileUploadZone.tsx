@@ -108,7 +108,7 @@ export default function FileUploadZone({
                 : "border-secondary/70 bg-secondary/[0.05]"
               : file
                 ? "border-success/40 bg-success/[0.03]"
-                : "border-white/[0.12] hover:border-white/[0.22] hover:bg-white/[0.025]",
+                : "border-line-ui hover:border-line-ui-strong hover:bg-tint-1",
           disabled && "pointer-events-none opacity-50",
         )}
       >
@@ -116,16 +116,13 @@ export default function FileUploadZone({
         <span
           aria-hidden
           className={cn(
-            "pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500",
-            isPrimary
-              ? "bg-[radial-gradient(60%_60%_at_50%_0%,rgba(110,86,248,0.16),transparent)]"
-              : "bg-[radial-gradient(60%_60%_at_50%_0%,rgba(36,211,180,0.13),transparent)]",
+            "ambient-top pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500",
             dragging ? "opacity-100" : "group-hover:opacity-60",
           )}
         />
 
         {dragging && (
-          <span className="pointer-events-none absolute inset-x-0 top-0 h-8 animate-scanline bg-gradient-to-b from-transparent via-white/[0.07] to-transparent" />
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-8 animate-scanline bg-gradient-to-b from-transparent via-tint-3 to-transparent" />
         )}
 
         <input
@@ -173,7 +170,7 @@ export default function FileUploadZone({
                   e.stopPropagation();
                   onClear();
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium text-mist transition-colors hover:bg-white/[0.06] hover:text-danger"
+                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium text-mist transition-colors hover:bg-tint-3 hover:text-danger"
               >
                 <Trash2 className="h-3.5 w-3.5" /> Remove
               </button>
@@ -189,7 +186,7 @@ export default function FileUploadZone({
             >
               <span
                 className={cn(
-                  "flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1 group-hover:scale-[1.04]",
+                  "flex h-14 w-14 items-center justify-center rounded-2xl bg-tint-2 ring-1 ring-line-soft transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1 group-hover:scale-[1.04]",
                   error && "bg-danger/10 ring-danger/30",
                 )}
               >

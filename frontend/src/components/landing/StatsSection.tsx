@@ -54,16 +54,16 @@ export default function StatsSection() {
   return (
     <section
       ref={scope}
-      className="relative border-y border-white/[0.06] bg-abyss/50 py-20 sm:py-24"
+      className="relative border-y border-line-soft bg-abyss/50 py-20 sm:py-24"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_120%,rgba(110,86,248,0.12),transparent)]" />
+      <div className="pointer-events-none absolute inset-0 ambient-bottom" />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
         <div className="flex items-center gap-4">
           <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-faint">
             measured, not marketed
           </span>
-          <span className="h-px flex-1 bg-gradient-to-r from-white/[0.1] to-transparent" />
+          <span className="h-px flex-1 bg-gradient-to-r from-line-strong to-transparent" />
         </div>
 
         <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
