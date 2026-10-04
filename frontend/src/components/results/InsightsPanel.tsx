@@ -34,10 +34,10 @@ export function GapsPanel({ gaps }: { gaps: GapAnalysis }) {
                 <span
                   key={k.keyword}
                   className="rounded-md border border-danger/25 bg-danger/[0.08] px-2 py-1 font-mono text-xs text-red-300"
-                  title={`Appears ${k.jd_occurrences}× in the job description`}
+                  title={`Appears ${k.occurrences}× in the job description`}
                 >
                   {k.keyword}
-                  <span className="ml-1.5 text-red-400/60">×{k.jd_occurrences}</span>
+                  <span className="ml-1.5 text-red-400/60">×{k.occurrences}</span>
                 </span>
               ))}
             </div>
@@ -55,14 +55,14 @@ export function GapsPanel({ gaps }: { gaps: GapAnalysis }) {
                   key={s.skill}
                   className={cn(
                     "rounded-md border px-2 py-1 font-mono text-xs",
-                    s.importance === "required"
+                    s.importance === "high"
                       ? "border-danger/25 bg-danger/[0.08] text-red-300"
                       : "border-warning/25 bg-warning/[0.08] text-amber-300",
                   )}
                 >
                   {s.skill}
                   <span className="ml-1.5 text-[10px] opacity-60">
-                    {s.importance === "required" ? "req" : "pref"}
+                    {s.importance === "high" ? "req" : s.importance === "low" ? "pref" : "core"}
                   </span>
                 </span>
               ))}

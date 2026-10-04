@@ -24,12 +24,15 @@ education_match      100.0  (w 0.10)   degree rank + field-of-study agreement
 | Backend NLP pipeline (14 stages) | ✅ complete, verified end to end |
 | Backend REST API + persistence | ✅ complete, verified end to end |
 | Test fixtures & sample documents | ✅ `backend/tests/fixtures.py` |
+| Next.js frontend (landing / analyze / results / history) | ✅ complete, wired to the API |
 | Pytest suite | 🚧 in progress |
 | Dockerfile / docker-compose | 🚧 in progress |
-| Next.js frontend (landing / analyze / results) | 🚧 not started |
 
-The backend is fully functional on its own — `POST /api/analyze` returns the complete
-result payload, and `/docs` gives an interactive OpenAPI UI.
+Both halves run together: the Next.js dev server proxies every `/api/*` request to
+the FastAPI backend (`next.config.ts` rewrites → `http://127.0.0.1:8000`), so the
+browser only ever talks to the frontend origin. `POST /api/analyze` returns the
+complete result payload, `POST /api/sample` analyses the bundled demo documents,
+and `/docs` gives an interactive OpenAPI UI.
 
 ---
 
@@ -100,6 +103,7 @@ Every fallback is observable, never silent:
 | Method | Path | Description |
 | --- | --- | --- |
 | `POST` | `/api/analyze` | Multipart `resume` + `job_description` → full analysis |
+| `POST` | `/api/sample` | Analyse the bundled sample resume × job description |
 | `GET` | `/api/health` | Service, model, OCR and database health |
 | `GET` | `/api/stats` | Aggregate statistics over stored analyses |
 | `GET` | `/api/models` | Detailed NLP model registry state + score weights |
@@ -158,7 +162,17 @@ curl -s http://localhost:8000/api/analyze \
 
 ## Running it
 
-### Local
+### One command
+
+```bash
+./run.sh            # installs deps on first run, starts backend :8000 + frontend :3000
+./run.sh --backend  # API only
+./run.sh --frontend # UI only
+```
+
+### Manual
+
+**Backend** (FastAPI on :8000):
 
 ```bash
 cd backend
@@ -173,7 +187,17 @@ cp .env.example .env          # adjust if needed
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Open <http://localhost:8000/docs> for the interactive API.
+**Frontend** (Next.js on :3000, proxies `/api/*` to the backend):
+
+```bash
+cd frontend
+npm install
+npm run dev          # http://localhost:3000
+```
+
+Open <http://localhost:3000> for the UI, or <http://localhost:8000/docs> for the
+interactive API. The backend host the frontend proxies to can be overridden with
+`BACKEND_URL` (rewrites) / `API_BASE_URL` (server-side history fetch).
 
 Without the model downloads the service still works — it runs the offline
 heuristic pipeline plus the TF-IDF/LSA semantic encoder and reports

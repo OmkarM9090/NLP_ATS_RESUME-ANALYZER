@@ -7,15 +7,28 @@ import { cn, formatBytes } from "@/lib/utils";
 
 export const MAX_UPLOAD_MB = 10;
 
-export function validatePdfFile(file: File): string | null {
-  if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
-    return "Only PDF files are supported.";
+const ACCEPTED_EXTENSIONS = [".pdf", ".txt", ".docx"];
+const ACCEPTED_TYPES = [
+  "application/pdf",
+  "text/plain",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+export function validateUploadFile(file: File): string | null {
+  const name = file.name.toLowerCase();
+  const extOk = ACCEPTED_EXTENSIONS.some((ext) => name.endsWith(ext));
+  const typeOk = file.type !== "" && ACCEPTED_TYPES.includes(file.type);
+  if (!extOk && !typeOk) {
+    return "Only PDF, TXT or DOCX files are supported.";
   }
   if (file.size === 0) return "This file is empty.";
   if (file.size > MAX_UPLOAD_MB * 1024 * 1024)
     return `File exceeds the ${MAX_UPLOAD_MB}MB limit.`;
   return null;
 }
+
+/** @deprecated Use {@link validateUploadFile}. */
+export const validatePdfFile = validateUploadFile;
 
 interface Props {
   id: string;
@@ -88,7 +101,7 @@ export default function FileUploadZone({
           ref={inputRef}
           id={id}
           type="file"
-          accept=".pdf,application/pdf"
+          accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           className="hidden"
           disabled={disabled}
           onChange={(e) => {
@@ -116,7 +129,7 @@ export default function FileUploadZone({
                   {file.name}
                 </p>
                 <p className="mt-1 font-mono text-xs text-mist">
-                  {formatBytes(file.size)} · PDF
+                  {formatBytes(file.size)} · {(file.name.split(".").pop() || "file").toUpperCase()}
                 </p>
               </div>
               <div className="flex items-center gap-3">

@@ -418,6 +418,8 @@ class NLPMetadata(Model):
     jd_unique_tokens: int = 0
     resume_sentence_count: int = 0
     jd_sentence_count: int = 0
+    resume_pages: int = 0
+    jd_pages: int = 0
     processing_time_ms: float = 0.0
     models_used: List[str] = Field(default_factory=list)
     resume_extraction_method: str = ExtractionMethod.PDFPLUMBER.value

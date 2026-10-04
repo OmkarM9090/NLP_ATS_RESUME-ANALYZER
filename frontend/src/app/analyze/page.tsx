@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import FileUploadZone, {
-  validatePdfFile,
+  validateUploadFile,
 } from "@/components/analyze/FileUploadZone";
 import AnalysisLoader from "@/components/analyze/AnalysisLoader";
 import { Button } from "@/components/ui/primitives";
@@ -124,8 +124,9 @@ function AnalyzePageInner() {
             Upload your <span className="gradient-text">documents</span>
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-mist sm:text-base">
-            Provide both PDFs — the pipeline never shares or trains on your
-            files. Analysis runs in request scope and only the report is stored.
+            Provide both documents (PDF, TXT or DOCX) — the pipeline never
+            shares or trains on your files. Analysis runs in request scope and
+            only the report is stored.
           </p>
         </motion.div>
 
@@ -142,14 +143,14 @@ function AnalyzePageInner() {
             </p>
             <FileUploadZone
               id="resume-upload"
-              label="Drop your resume PDF"
-              sublabel="PDF only · max 10MB · text-based"
+              label="Drop your resume"
+              sublabel="PDF, TXT or DOCX · max 10MB"
               accent="primary"
               file={resume}
               error={resumeError}
               disabled={isAnalyzing}
               onFile={(f) => {
-                const err = validatePdfFile(f);
+                const err = validateUploadFile(f);
                 setResumeError(err);
                 setResume(err ? null : f);
               }}
@@ -163,14 +164,14 @@ function AnalyzePageInner() {
             </p>
             <FileUploadZone
               id="jd-upload"
-              label="Drop the job description PDF"
-              sublabel="Export or print the posting to PDF"
+              label="Drop the job description"
+              sublabel="PDF, TXT or DOCX · paste the posting into a file"
               accent="secondary"
               file={jd}
               error={jdError}
               disabled={isAnalyzing}
               onFile={(f) => {
-                const err = validatePdfFile(f);
+                const err = validateUploadFile(f);
                 setJdError(err);
                 setJd(err ? null : f);
               }}
