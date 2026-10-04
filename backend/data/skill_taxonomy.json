@@ -1,0 +1,1106 @@
+{
+  "programming_languages": {
+    "Python": [
+      "python",
+      "python3",
+      "python 3",
+      "py",
+      "python programming"
+    ],
+    "JavaScript": [
+      "javascript",
+      "js",
+      "ecmascript",
+      "es6",
+      "es2015",
+      "vanilla js"
+    ],
+    "TypeScript": [
+      "typescript",
+      "ts",
+      "tsx"
+    ],
+    "Java": [
+      "java",
+      "jdk",
+      "j2ee",
+      "java se",
+      "java ee"
+    ],
+    "C++": [
+      "c++",
+      "cpp",
+      "cplusplus",
+      "c plus plus"
+    ],
+    "C": [
+      "c language",
+      "c programming",
+      "ansi c"
+    ],
+    "C#": [
+      "c#",
+      "csharp",
+      "c sharp",
+      "dotnet c#"
+    ],
+    "Go": [
+      "go",
+      "golang",
+      "go lang"
+    ],
+    "Rust": [
+      "rust",
+      "rustlang",
+      "rust lang"
+    ],
+    "Ruby": [
+      "ruby",
+      "rb",
+      "ruby on rails"
+    ],
+    "PHP": [
+      "php",
+      "php7",
+      "php8"
+    ],
+    "Swift": [
+      "swift",
+      "swiftui language"
+    ],
+    "Kotlin": [
+      "kotlin"
+    ],
+    "Scala": [
+      "scala"
+    ],
+    "R": [
+      "r language",
+      "r programming",
+      "rscript"
+    ],
+    "SQL": [
+      "sql",
+      "structured query language",
+      "t-sql",
+      "pl/sql",
+      "plsql",
+      "sql queries"
+    ],
+    "Bash": [
+      "bash",
+      "shell scripting",
+      "shell",
+      "zsh",
+      "powershell",
+      "scripting"
+    ],
+    "Perl": [
+      "perl"
+    ],
+    "Lua": [
+      "lua"
+    ],
+    "Dart": [
+      "dart"
+    ],
+    "Elixir": [
+      "elixir",
+      "erlang"
+    ],
+    "Haskell": [
+      "haskell"
+    ],
+    "MATLAB": [
+      "matlab"
+    ],
+    "Groovy": [
+      "groovy"
+    ],
+    "Solidity": [
+      "solidity",
+      "smart contracts"
+    ]
+  },
+  "frameworks_libraries": {
+    "React": [
+      "react",
+      "reactjs",
+      "react.js",
+      "react js"
+    ],
+    "Next.js": [
+      "next",
+      "nextjs",
+      "next.js",
+      "next js"
+    ],
+    "Angular": [
+      "angular",
+      "angularjs",
+      "angular.js",
+      "angular 2+"
+    ],
+    "Vue.js": [
+      "vue",
+      "vuejs",
+      "vue.js",
+      "nuxt",
+      "nuxt.js"
+    ],
+    "Svelte": [
+      "svelte",
+      "sveltekit"
+    ],
+    "Redux": [
+      "redux",
+      "redux toolkit",
+      "rtk",
+      "zustand",
+      "mobx"
+    ],
+    "Django": [
+      "django",
+      "django rest framework",
+      "drf"
+    ],
+    "Flask": [
+      "flask"
+    ],
+    "FastAPI": [
+      "fastapi",
+      "fast api",
+      "fast-api"
+    ],
+    "Spring Boot": [
+      "spring",
+      "spring boot",
+      "springboot",
+      "spring mvc",
+      "spring framework"
+    ],
+    "Node.js": [
+      "node",
+      "nodejs",
+      "node.js",
+      "node js"
+    ],
+    "Express": [
+      "express",
+      "expressjs",
+      "express.js"
+    ],
+    "NestJS": [
+      "nestjs",
+      "nest.js"
+    ],
+    "ASP.NET": [
+      "asp.net",
+      "asp net",
+      ".net",
+      "dotnet",
+      "dotnet core",
+      ".net core"
+    ],
+    "Ruby on Rails": [
+      "rails",
+      "ruby on rails",
+      "ror"
+    ],
+    "Laravel": [
+      "laravel"
+    ],
+    "Tailwind CSS": [
+      "tailwind",
+      "tailwindcss",
+      "tailwind css"
+    ],
+    "Bootstrap": [
+      "bootstrap"
+    ],
+    "jQuery": [
+      "jquery"
+    ],
+    "GraphQL": [
+      "graphql",
+      "apollo",
+      "relay"
+    ],
+    "gRPC": [
+      "grpc",
+      "protocol buffers",
+      "protobuf"
+    ],
+    "Celery": [
+      "celery"
+    ],
+    "Pydantic": [
+      "pydantic"
+    ],
+    "SQLAlchemy": [
+      "sqlalchemy",
+      "sql alchemy",
+      "hibernate",
+      "orm"
+    ],
+    "TensorFlow": [
+      "tensorflow",
+      "tf",
+      "tensorflow hub",
+      "keras"
+    ],
+    "PyTorch": [
+      "pytorch",
+      "torch"
+    ],
+    "scikit-learn": [
+      "sklearn",
+      "scikit-learn",
+      "scikit learn"
+    ],
+    "Hugging Face": [
+      "huggingface",
+      "hugging face",
+      "transformers library",
+      "hf transformers"
+    ],
+    "LangChain": [
+      "langchain",
+      "llama index",
+      "llamaindex"
+    ],
+    "OpenCV": [
+      "opencv",
+      "cv2"
+    ],
+    "NumPy": [
+      "numpy"
+    ],
+    "Pandas": [
+      "pandas"
+    ],
+    "SciPy": [
+      "scipy"
+    ],
+    "Matplotlib": [
+      "matplotlib",
+      "seaborn",
+      "plotly",
+      "bokeh",
+      "altair"
+    ],
+    "Statsmodels": [
+      "statsmodels"
+    ],
+    "XGBoost": [
+      "xgboost",
+      "lightgbm",
+      "catboost",
+      "gradient boosting"
+    ],
+    "spaCy": [
+      "spacy"
+    ],
+    "NLTK": [
+      "nltk"
+    ],
+    "JUnit": [
+      "junit",
+      "testng",
+      "mockito"
+    ],
+    "pytest": [
+      "pytest",
+      "py.test"
+    ],
+    "Jest": [
+      "jest",
+      "vitest",
+      "mocha",
+      "chai"
+    ],
+    "Cypress": [
+      "cypress",
+      "playwright",
+      "puppeteer"
+    ],
+    "Selenium": [
+      "selenium",
+      "selenium webdriver",
+      "appium"
+    ],
+    "Flutter": [
+      "flutter"
+    ],
+    "React Native": [
+      "react native",
+      "react-native"
+    ],
+    "Android SDK": [
+      "android sdk",
+      "android development"
+    ],
+    "iOS SDK": [
+      "ios sdk",
+      "xcode",
+      "uikit"
+    ]
+  },
+  "cloud_devops": {
+    "AWS": [
+      "aws",
+      "amazon web services",
+      "ec2",
+      "s3",
+      "lambda",
+      "ecs",
+      "eks",
+      "cloudformation",
+      "athena",
+      "redshift",
+      "glue",
+      "sagemaker"
+    ],
+    "Azure": [
+      "azure",
+      "microsoft azure",
+      "azure devops",
+      "aks",
+      "azure functions"
+    ],
+    "GCP": [
+      "gcp",
+      "google cloud",
+      "google cloud platform",
+      "bigquery",
+      "gke",
+      "cloud run",
+      "dataflow"
+    ],
+    "Docker": [
+      "docker",
+      "containerization",
+      "containerisation",
+      "containers",
+      "docker compose",
+      "dockerfile"
+    ],
+    "Kubernetes": [
+      "kubernetes",
+      "k8s",
+      "kubectl",
+      "helm",
+      "openshift",
+      "eks",
+      "gke",
+      "aks cluster"
+    ],
+    "Terraform": [
+      "terraform",
+      "iac",
+      "infrastructure as code",
+      "pulumi",
+      "cloudformation",
+      "ansible"
+    ],
+    "Jenkins": [
+      "jenkins"
+    ],
+    "GitHub Actions": [
+      "github actions",
+      "gh actions",
+      "gitlab ci",
+      "circleci",
+      "travis ci",
+      "bamboo"
+    ],
+    "CI/CD": [
+      "ci/cd",
+      "cicd",
+      "continuous integration",
+      "continuous deployment",
+      "continuous delivery",
+      "deployment pipelines"
+    ],
+    "Nginx": [
+      "nginx",
+      "apache",
+      "haproxy",
+      "traefik",
+      "reverse proxy",
+      "load balancing"
+    ],
+    "Linux": [
+      "linux",
+      "ubuntu",
+      "centos",
+      "debian",
+      "unix",
+      "rhel",
+      "system administration"
+    ],
+    "Monitoring": [
+      "monitoring",
+      "prometheus",
+      "grafana",
+      "datadog",
+      "new relic",
+      "cloudwatch",
+      "observability",
+      "alerting",
+      "sre"
+    ],
+    "Logging": [
+      "logging",
+      "elk stack",
+      "splunk",
+      "logstash",
+      "kibana",
+      "fluentd",
+      "structured logging"
+    ],
+    "Serverless": [
+      "serverless",
+      "faas",
+      "lambda functions",
+      "cloud functions"
+    ],
+    "Microservices": [
+      "microservices",
+      "micro-services",
+      "service mesh",
+      "istio",
+      "distributed systems",
+      "event driven architecture"
+    ],
+    "Kafka": [
+      "kafka",
+      "apache kafka",
+      "msk",
+      "confluent"
+    ],
+    "RabbitMQ": [
+      "rabbitmq",
+      "activemq",
+      "message broker",
+      "message queue",
+      "sqs",
+      "pubsub"
+    ],
+    "Airflow": [
+      "airflow",
+      "apache airflow",
+      "dagster",
+      "prefect",
+      "luigi",
+      "workflow orchestration"
+    ],
+    "dbt": [
+      "dbt",
+      "dbt core",
+      "data build tool"
+    ],
+    "Git": [
+      "git",
+      "github",
+      "gitlab",
+      "bitbucket",
+      "version control",
+      "svn",
+      "mercurial"
+    ],
+    "Site Reliability": [
+      "site reliability",
+      "incident response",
+      "on-call",
+      "chaos engineering",
+      "high availability",
+      "disaster recovery"
+    ]
+  },
+  "databases": {
+    "PostgreSQL": [
+      "postgresql",
+      "postgres",
+      "psql"
+    ],
+    "MySQL": [
+      "mysql",
+      "mariadb"
+    ],
+    "MongoDB": [
+      "mongodb",
+      "mongo",
+      "mongoose"
+    ],
+    "Redis": [
+      "redis",
+      "memcached",
+      "caching",
+      "cache"
+    ],
+    "Elasticsearch": [
+      "elasticsearch",
+      "elastic",
+      "opensearch",
+      "solr",
+      "lucene"
+    ],
+    "DynamoDB": [
+      "dynamodb",
+      "dynamo",
+      "cassandra",
+      "couchbase",
+      "bigtable"
+    ],
+    "SQLite": [
+      "sqlite"
+    ],
+    "Oracle": [
+      "oracle db",
+      "oracle database",
+      "pl/sql"
+    ],
+    "SQL Server": [
+      "sql server",
+      "mssql",
+      "microsoft sql server"
+    ],
+    "Snowflake": [
+      "snowflake"
+    ],
+    "Data Warehousing": [
+      "data warehouse",
+      "data warehousing",
+      "dimensional modeling",
+      "star schema",
+      "etl",
+      "elt",
+      "data modeling",
+      "data modelling"
+    ],
+    "Neo4j": [
+      "neo4j",
+      "graph database",
+      "neptune",
+      "graph databases"
+    ],
+    "Vector Database": [
+      "vector database",
+      "pinecone",
+      "weaviate",
+      "milvus",
+      "faiss",
+      "chromadb",
+      "pgvector",
+      "vector search",
+      "embeddings store"
+    ]
+  },
+  "data_ml": {
+    "Machine Learning": [
+      "machine learning",
+      "ml",
+      "ml engineering",
+      "statistical modeling",
+      "predictive modeling"
+    ],
+    "Deep Learning": [
+      "deep learning",
+      "dl",
+      "neural networks",
+      "cnn",
+      "rnn",
+      "transformers",
+      "attention mechanism"
+    ],
+    "Natural Language Processing": [
+      "nlp",
+      "natural language processing",
+      "text mining",
+      "text analytics",
+      "named entity recognition",
+      "sentiment analysis",
+      "tokenization",
+      "topic modeling",
+      "word embeddings",
+      "large language models",
+      "llm",
+      "llms",
+      "prompt engineering",
+      "generative ai",
+      "genai",
+      "rag",
+      "retrieval augmented generation"
+    ],
+    "Computer Vision": [
+      "computer vision",
+      "cv",
+      "image recognition",
+      "image processing",
+      "object detection",
+      "image segmentation",
+      "ocr"
+    ],
+    "Data Science": [
+      "data science",
+      "data analysis",
+      "data analytics",
+      "exploratory data analysis",
+      "eda",
+      "statistical analysis",
+      "hypothesis testing",
+      "a/b testing",
+      "experimentation"
+    ],
+    "Data Engineering": [
+      "data engineering",
+      "data pipelines",
+      "data pipeline",
+      "etl pipelines",
+      "data ingestion",
+      "data integration",
+      "data architecture",
+      "stream processing",
+      "batch processing"
+    ],
+    "Big Data": [
+      "big data",
+      "hadoop",
+      "hive",
+      "spark",
+      "apache spark",
+      "pyspark",
+      "databricks",
+      "presto",
+      "flink",
+      "mapreduce",
+      "hdfs"
+    ],
+    "MLOps": [
+      "mlops",
+      "model deployment",
+      "model monitoring",
+      "model versioning",
+      "mlflow",
+      "kubeflow",
+      "seldon",
+      "feature store",
+      "model registry",
+      "drift detection",
+      "model serving"
+    ],
+    "Recommender Systems": [
+      "recommender systems",
+      "recommendation systems",
+      "collaborative filtering",
+      "content based filtering",
+      "personalization"
+    ],
+    "Time Series": [
+      "time series",
+      "forecasting",
+      "prophet",
+      "arima",
+      "seasonality",
+      "anomaly detection"
+    ],
+    "Reinforcement Learning": [
+      "reinforcement learning",
+      "rl",
+      "q-learning"
+    ],
+    "Data Visualization": [
+      "data visualization",
+      "data visualisation",
+      "tableau",
+      "power bi",
+      "looker",
+      "dashboards",
+      "storytelling with data",
+      "d3",
+      "d3.js",
+      "superset",
+      "quicksight",
+      "looker studio",
+      "excel charts"
+    ],
+    "Statistics": [
+      "statistics",
+      "probability",
+      "bayesian",
+      "regression",
+      "classification",
+      "clustering",
+      "inference"
+    ],
+    "Feature Engineering": [
+      "feature engineering",
+      "feature extraction",
+      "dimensionality reduction",
+      "pca"
+    ],
+    "Business Intelligence": [
+      "business intelligence",
+      "bi",
+      "reporting",
+      "olap",
+      "kpi tracking",
+      "metrics"
+    ]
+  },
+  "web_mobile": {
+    "REST APIs": [
+      "rest",
+      "rest api",
+      "rest apis",
+      "restful",
+      "restful apis",
+      "api development",
+      "api design",
+      "web services",
+      "openapi",
+      "swagger"
+    ],
+    "HTML/CSS": [
+      "html",
+      "html5",
+      "css",
+      "css3",
+      "sass",
+      "scss",
+      "less",
+      "responsive design",
+      "cross browser"
+    ],
+    "Web Performance": [
+      "web performance",
+      "core web vitals",
+      "page speed",
+      "lazy loading",
+      "caching strategies",
+      "cdn"
+    ],
+    "Accessibility": [
+      "accessibility",
+      "a11y",
+      "wcag",
+      "aria",
+      "screen readers"
+    ],
+    "SEO": [
+      "seo",
+      "search engine optimization",
+      "ssr",
+      "server side rendering",
+      "static site generation"
+    ],
+    "WebSockets": [
+      "websockets",
+      "socket.io",
+      "real-time",
+      "realtime",
+      "sse",
+      "server sent events"
+    ],
+    "PWA": [
+      "pwa",
+      "progressive web app",
+      "service workers"
+    ],
+    "Authentication": [
+      "authentication",
+      "authorization",
+      "oauth",
+      "oauth2",
+      "jwt",
+      "sso",
+      "saml",
+      "openid connect",
+      "session management",
+      "rbac"
+    ],
+    "UI Development": [
+      "ui development",
+      "frontend development",
+      "front-end development",
+      "component libraries",
+      "design systems",
+      "storybook",
+      "material ui",
+      "mui",
+      "chakra ui",
+      "shadcn"
+    ]
+  },
+  "security": {
+    "Cybersecurity": [
+      "cybersecurity",
+      "information security",
+      "infosec",
+      "network security",
+      "application security",
+      "appsec"
+    ],
+    "Penetration Testing": [
+      "penetration testing",
+      "pen testing",
+      "ethical hacking",
+      "vulnerability assessment",
+      "red team",
+      "burp suite",
+      "metasploit"
+    ],
+    "Encryption": [
+      "encryption",
+      "cryptography",
+      "tls",
+      "ssl",
+      "pki",
+      "hashing",
+      "aes",
+      "rsa"
+    ],
+    "Compliance": [
+      "compliance",
+      "gdpr",
+      "soc 2",
+      "hipaa",
+      "pci-dss",
+      "iso 27001",
+      "audit",
+      "governance",
+      "risk management"
+    ],
+    "IAM": [
+      "iam",
+      "identity management",
+      "active directory",
+      "privilege management",
+      "secrets management",
+      "vault"
+    ],
+    "OWASP": [
+      "owasp",
+      "secure coding",
+      "threat modeling",
+      "input validation",
+      "xss",
+      "sql injection",
+      "csrf"
+    ]
+  },
+  "product_design": {
+    "Figma": [
+      "figma",
+      "sketch",
+      "adobe xd",
+      "invision",
+      "wireframing",
+      "prototyping",
+      "ui design",
+      "ux design",
+      "user research",
+      "design thinking"
+    ],
+    "Product Management": [
+      "product management",
+      "product owner",
+      "product strategy",
+      "roadmap",
+      "backlog",
+      "user stories",
+      "requirements gathering",
+      "stakeholder management",
+      "go-to-market",
+      "product discovery"
+    ],
+    "Agile": [
+      "agile",
+      "scrum",
+      "kanban",
+      "sprint",
+      "lean",
+      "safe",
+      "xp",
+      "agile methodology",
+      "daily standup",
+      "retrospective",
+      "jira",
+      "confluence",
+      "trello",
+      "asana",
+      "notion"
+    ],
+    "Project Management": [
+      "project management",
+      "program management",
+      "pmp",
+      "prince2",
+      "gantt",
+      "resource planning",
+      "risk mitigation",
+      "waterfall",
+      "delivery management"
+    ],
+    "Technical Writing": [
+      "technical writing",
+      "documentation",
+      "api documentation",
+      "runbooks",
+      "knowledge base",
+      "copywriting"
+    ]
+  },
+  "domain_expertise": {
+    "FinTech": [
+      "fintech",
+      "payments",
+      "banking",
+      "trading systems",
+      "financial modeling",
+      "stripe",
+      "paypal",
+      "ledger",
+      "blockchain",
+      "web3",
+      "cryptocurrency"
+    ],
+    "Healthcare": [
+      "healthcare",
+      "ehr",
+      "hl7",
+      "fhir",
+      "clinical",
+      "hipaa compliant",
+      "telemedicine",
+      "medical"
+    ],
+    "E-commerce": [
+      "e-commerce",
+      "ecommerce",
+      "shopify",
+      "magento",
+      "woocommerce",
+      "marketplace",
+      "retail",
+      "inventory management",
+      "checkout"
+    ],
+    "Marketing Tech": [
+      "marketing",
+      "seo tools",
+      "google analytics",
+      "ga4",
+      "campaign management",
+      "crm",
+      "salesforce",
+      "hubspot",
+      "email marketing",
+      "growth hacking"
+    ],
+    "Education Tech": [
+      "edtech",
+      "lms",
+      "e-learning",
+      "curriculum"
+    ],
+    "Logistics": [
+      "logistics",
+      "supply chain",
+      "warehouse management",
+      "erp",
+      "sap",
+      "fleet management"
+    ],
+    "Telecom": [
+      "telecom",
+      "5g",
+      "network protocols",
+      "voip"
+    ],
+    "Gaming": [
+      "game development",
+      "unity",
+      "unreal engine",
+      "godot"
+    ]
+  },
+  "soft_skills": {
+    "Leadership": [
+      "leadership",
+      "team lead",
+      "led teams",
+      "team leadership",
+      "mentoring",
+      "coaching",
+      "people management",
+      "line management",
+      "engineering manager",
+      "technical leadership"
+    ],
+    "Communication": [
+      "communication",
+      "public speaking",
+      "presentation",
+      "presentations",
+      "written communication",
+      "verbal communication",
+      "cross-functional collaboration",
+      "client facing"
+    ],
+    "Problem Solving": [
+      "problem solving",
+      "analytical thinking",
+      "critical thinking",
+      "troubleshooting",
+      "root cause analysis",
+      "debugging",
+      "decision making"
+    ],
+    "Collaboration": [
+      "collaboration",
+      "teamwork",
+      "team player",
+      "stakeholder engagement",
+      "remote collaboration",
+      "pair programming",
+      "code review"
+    ],
+    "Ownership": [
+      "ownership",
+      "self-starter",
+      "proactive",
+      "autonomous",
+      "initiative",
+      "results driven",
+      "detail oriented",
+      "attention to detail",
+      "time management",
+      "prioritization"
+    ],
+    "Adaptability": [
+      "adaptability",
+      "fast-paced",
+      "flexibility",
+      "continuous learning",
+      "curiosity",
+      "growth mindset"
+    ],
+    "Innovation": [
+      "innovation",
+      "creativity",
+      "creative problem solving",
+      "research and development",
+      "r&d"
+    ],
+    "Customer Focus": [
+      "customer focus",
+      "customer success",
+      "user centric",
+      "client satisfaction",
+      "empathy",
+      "customer service"
+    ]
+  }
+}
