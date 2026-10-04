@@ -127,10 +127,10 @@ export default function Preloader() {
       aria-hidden
     >
       <div className="pointer-events-none absolute inset-0 grid-lines opacity-40" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.12] blur-[130px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-glow-primary blur-[130px]" />
 
       <div className="relative flex items-center gap-3">
-        <span className="pl-mark flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-b from-primary-2 to-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_16px_40px_-18px_rgba(110,86,248,0.95)]">
+        <span className="pl-mark flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-b from-primary to-primary-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]">
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 7V5.5A1.5 1.5 0 0 1 5.5 4H16l4 4v10.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5V7Z" />
             <path d="M7 12h7M7 16h4" />
@@ -158,8 +158,8 @@ export default function Preloader() {
             000
           </span>
         </div>
-        <div className="h-px w-full overflow-hidden bg-white/[0.09]">
-          <span className="pl-bar-fill block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-primary-2 via-primary to-secondary" />
+        <div className="h-px w-full overflow-hidden bg-tint-4">
+          <span className="pl-bar-fill block h-full w-full origin-left scale-x-0 bg-gradient-to-r from-primary via-primary-2 to-primary" />
         </div>
         <p className="pl-meta mt-3 font-mono text-[9.5px] uppercase tracking-[0.22em] text-faint/70">
           tokenize · lemmatize · match

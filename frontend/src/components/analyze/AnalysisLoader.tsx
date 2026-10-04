@@ -77,7 +77,7 @@ export default function AnalysisLoader({
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="card relative w-[min(94vw,460px)] overflow-hidden rounded-3xl p-7 sm:p-8"
           >
-            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/20 blur-[70px]" />
+            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/10 blur-[70px]" />
 
             <div className="relative flex items-center gap-5">
               <div className="relative flex h-[86px] w-[86px] shrink-0 items-center justify-center">
@@ -87,7 +87,7 @@ export default function AnalysisLoader({
                     cy="43"
                     r={R}
                     fill="none"
-                    stroke="rgba(255,255,255,0.07)"
+                    className="stroke-track"
                     strokeWidth="4"
                   />
                   <circle
@@ -102,8 +102,8 @@ export default function AnalysisLoader({
                   />
                   <defs>
                     <linearGradient id="al-grad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#8D7BFF" />
-                      <stop offset="100%" stopColor="#24D3B4" />
+                      <stop offset="0%" style={{ stopColor: "var(--t-primary-2)" }} />
+                      <stop offset="100%" style={{ stopColor: "var(--t-primary)" }} />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -134,7 +134,7 @@ export default function AnalysisLoader({
                         state === "done" && "bg-success/12 text-success ring-success/30",
                         state === "active" &&
                           "bg-primary/15 text-primary-2 ring-primary/35",
-                        state === "todo" && "bg-white/[0.03] text-faint ring-white/[0.07]",
+                        state === "todo" && "bg-tint-1 text-faint ring-line-soft",
                       )}
                     >
                       {state === "active" ? (
@@ -160,7 +160,7 @@ export default function AnalysisLoader({
               {[88, 64, 76].map((w, i) => (
                 <span
                   key={i}
-                  className="block h-1.5 origin-left rounded-full bg-white/[0.05]"
+                  className="block h-1.5 origin-left rounded-full bg-tint-2"
                   style={{ width: `${w}%` }}
                 />
               ))}

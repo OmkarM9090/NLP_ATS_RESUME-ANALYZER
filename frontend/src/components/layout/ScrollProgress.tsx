@@ -47,7 +47,7 @@ export default function ScrollProgress() {
     >
       <div
         ref={barRef}
-        className="h-px origin-left scale-x-0 bg-gradient-to-r from-primary-2 via-primary to-secondary"
+        className="h-px origin-left scale-x-0 bg-gradient-to-r from-primary to-primary-2"
         style={{ transform: "scaleX(0)" }}
       />
     </div>

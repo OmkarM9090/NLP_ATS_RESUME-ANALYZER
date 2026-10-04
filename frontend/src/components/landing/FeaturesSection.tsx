@@ -24,7 +24,7 @@ function PipelineVisual() {
     ["built", "build"],
   ];
   return (
-    <div className="mt-6 rounded-xl border border-white/[0.06] bg-void/40 p-4">
+    <div className="mt-6 rounded-xl border border-line-soft bg-void/40 p-4">
       <div className="flex flex-wrap items-center gap-2">
         {stages.map((s, i) => (
           <span key={s} className="flex items-center gap-2">
@@ -34,7 +34,7 @@ function PipelineVisual() {
                 "rounded-lg border px-2.5 py-1 font-mono text-[10.5px] tracking-tight " +
                 (i === stages.length - 1
                   ? "border-primary/40 bg-primary/15 text-primary-2"
-                  : "border-white/[0.08] bg-white/[0.03] text-mist")
+                  : "border-line-soft bg-tint-1 text-mist")
               }
             >
               {s}
@@ -57,10 +57,10 @@ function PipelineVisual() {
         ))}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-white/[0.06] pt-3.5">
+      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-line-soft pt-3.5">
         {pairs.map(([from, to]) => (
           <span key={from} className="font-mono text-[10.5px] text-faint">
-            <span className="text-mist/60 line-through decoration-white/20">{from}</span>
+            <span className="text-mist/60 line-through decoration-line-strong">{from}</span>
             <span className="mx-1.5 text-primary-2">→</span>
             <span className="text-secondary">{to}</span>
           </span>
@@ -76,7 +76,7 @@ function SemanticVisual() {
     { label: "semantic coverage", value: 91, tone: "from-secondary/80 to-secondary" },
   ];
   return (
-    <div className="mt-6 rounded-xl border border-white/[0.06] bg-void/40 p-4">
+    <div className="mt-6 rounded-xl border border-line-soft bg-void/40 p-4">
       <div className="space-y-3">
         {bars.map((b) => (
           <div key={b.label}>
@@ -86,7 +86,7 @@ function SemanticVisual() {
               </span>
               <span className="font-mono text-[11px] tabular-nums text-mist">{b.value}</span>
             </div>
-            <span className="block h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+            <span className="block h-1.5 overflow-hidden rounded-full bg-tint-3">
               <span
                 data-sem-bar
                 className={`block h-full origin-left rounded-full bg-gradient-to-r ${b.tone}`}
@@ -96,12 +96,12 @@ function SemanticVisual() {
           </div>
         ))}
       </div>
-      <div className="mt-4 flex flex-wrap gap-1.5 border-t border-white/[0.06] pt-3.5">
+      <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line-soft pt-3.5">
         {["k8s ↔ Kubernetes", "react.js ↔ React", "golang ↔ Go"].map((p) => (
           <span
             key={p}
             data-synonym
-            className="rounded-md border border-secondary/20 bg-secondary/[0.07] px-2 py-0.5 font-mono text-[10px] text-secondary"
+            className="rounded-md border border-line-soft bg-tint-2 px-2 py-0.5 font-mono text-[10px] text-mist"
           >
             {p}
           </span>
@@ -281,7 +281,7 @@ export default function FeaturesSection() {
               data-feature-card
               className="card spotlight group relative overflow-hidden p-6 lg:col-span-2"
             >
-              <span className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.05] ring-1 ring-white/[0.08] transition-transform duration-500 group-hover:-translate-y-0.5">
+              <span className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-tint-2 ring-1 ring-line-soft transition-transform duration-500 group-hover:-translate-y-0.5">
                 <Icon className="h-4 w-4 text-ink/80" strokeWidth={1.9} />
               </span>
               <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
@@ -326,14 +326,14 @@ export default function FeaturesSection() {
                   <div
                     key={row.text}
                     data-fix-row
-                    className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-void/40 px-4 py-3"
+                    className="flex items-center gap-3 rounded-xl border border-line-soft bg-void/40 px-4 py-3"
                   >
                     <span
                       className={
                         "rounded-md px-1.5 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.14em] " +
                         (row.p === "high"
-                          ? "bg-danger/12 text-red-300 ring-1 ring-danger/25"
-                          : "bg-warning/12 text-amber-300 ring-1 ring-warning/25")
+                          ? "bg-danger/12 text-danger ring-1 ring-danger/25"
+                          : "bg-warning/12 text-warning ring-1 ring-warning/25")
                       }
                     >
                       {row.p}
@@ -344,7 +344,7 @@ export default function FeaturesSection() {
                     <span className="font-mono text-[11px] tabular-nums text-success">
                       {row.impact}
                     </span>
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-white/15" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-faint" />
                   </div>
                 ))}
               </div>

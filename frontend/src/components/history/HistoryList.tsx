@@ -73,7 +73,7 @@ export default function HistoryList({ rows }: { rows: HistoryRow[] }) {
 
               <Link
                 href={`/results?id=${r.id}`}
-                className="hidden h-9 items-center gap-1.5 rounded-lg border border-white/[0.09] px-3.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-mist transition-all duration-300 hover:border-secondary/40 hover:text-secondary sm:inline-flex"
+                className="hidden h-9 items-center gap-1.5 rounded-lg border border-line-ui px-3.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-mist transition-all duration-300 hover:border-line-ui-strong hover:text-ink sm:inline-flex"
               >
                 open
                 <ArrowRight className="h-3 w-3" />

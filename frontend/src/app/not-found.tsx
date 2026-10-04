@@ -4,10 +4,10 @@ import { ArrowLeft, Compass, FileQuestion } from "lucide-react";
 export default function NotFound() {
   return (
     <main className="relative flex min-h-screen items-center justify-center px-5 py-32 sm:px-8">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_55%_100%_at_50%_0%,rgba(110,86,248,0.14),transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] ambient-top" />
 
       <div className="card relative w-full max-w-xl overflow-hidden rounded-3xl p-9 text-center sm:p-12">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08]">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-tint-2 ring-1 ring-line-soft">
           <FileQuestion className="h-6 w-6 text-faint" strokeWidth={1.8} />
         </span>
 
@@ -37,7 +37,7 @@ export default function NotFound() {
           </Link>
         </div>
 
-        <div className="mt-10 border-t border-white/[0.06] pt-6">
+        <div className="mt-10 border-t border-line-soft pt-6">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
             resumeai · ats intelligence
           </p>

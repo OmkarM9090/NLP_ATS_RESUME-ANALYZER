@@ -177,29 +177,29 @@ export default function HeroSection() {
         <div className="absolute inset-0 grid-lines [mask-image:radial-gradient(ellipse_70%_55%_at_50%_30%,black,transparent)]" />
         <div
           data-parallax-depth="1.5"
-          className="absolute -left-[12%] top-[-14%] h-[560px] w-[560px] rounded-full bg-primary/[0.18] blur-[160px]"
+          className="absolute -left-[12%] top-[-14%] h-[560px] w-[560px] rounded-full bg-glow-primary blur-[160px]"
         />
         <div
           data-parallax-depth="1"
-          className="absolute -right-[10%] top-[6%] h-[480px] w-[480px] rounded-full bg-secondary/[0.09] blur-[170px]"
+          className="absolute -right-[10%] top-[6%] h-[480px] w-[480px] rounded-full bg-glow-secondary blur-[170px]"
         />
         <div
           data-parallax-depth="0.6"
-          className="absolute bottom-[-18%] left-[38%] h-[380px] w-[380px] rounded-full bg-primary/[0.08] blur-[170px]"
+          className="absolute bottom-[-18%] left-[38%] h-[380px] w-[380px] rounded-full bg-glow-primary blur-[170px]"
         />
       </div>
 
       <div className="hero-inner mx-auto grid w-full max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,1fr)] lg:gap-12">
         {/* ------------------------------ copy ---------------------------- */}
         <div>
-          <div className="hero-eyebrow inline-flex items-center gap-2.5 rounded-full border border-white/[0.09] bg-white/[0.035] py-1.5 pl-2 pr-3.5 backdrop-blur-sm">
+          <div className="hero-eyebrow inline-flex items-center gap-2.5 rounded-full border border-line-soft bg-tint-2 py-1.5 pl-2 pr-3.5 backdrop-blur-sm">
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/20">
               <Sparkles className="h-3 w-3 text-primary-2" strokeWidth={2.4} />
             </span>
             <span className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-mist">
               14-stage nlp pipeline
             </span>
-            <span className="h-3 w-px bg-white/10" />
+            <span className="h-3 w-px bg-line-strong" />
             <span className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-secondary">
               ~1s per pair
             </span>
@@ -264,7 +264,7 @@ export default function HeroSection() {
             <MatchEngine />
 
             {/* floating metric cards */}
-            <div className="hero-metric absolute -left-4 bottom-14 hidden w-[168px] rounded-2xl border border-white/[0.08] bg-panel/80 p-3.5 shadow-[0_28px_60px_-30px_rgba(0,0,0,1)] backdrop-blur-xl sm:block lg:-left-10">
+            <div className="hero-metric absolute -left-4 bottom-14 hidden w-[168px] rounded-2xl border border-line-soft bg-panel/80 p-3.5 shadow-float backdrop-blur-xl sm:block lg:-left-10">
               <div className="flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-md bg-success/15">
                   <Zap className="h-3 w-3 text-success" strokeWidth={2.4} />
@@ -283,7 +283,7 @@ export default function HeroSection() {
                 {["React", "AWS", "SQL"].map((s) => (
                   <span
                     key={s}
-                    className="rounded border border-success/20 bg-success/[0.08] px-1.5 py-0.5 font-mono text-[8.5px] text-emerald-300"
+                    className="rounded border border-success/20 bg-success/[0.08] px-1.5 py-0.5 font-mono text-[8.5px] text-success"
                   >
                     {s}
                   </span>
@@ -291,7 +291,7 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div className="hero-metric absolute -right-3 -top-5 hidden w-[150px] rounded-2xl border border-white/[0.08] bg-panel/80 p-3.5 shadow-[0_28px_60px_-30px_rgba(0,0,0,1)] backdrop-blur-xl sm:block lg:-right-8">
+            <div className="hero-metric absolute -right-3 -top-5 hidden w-[150px] rounded-2xl border border-line-soft bg-panel/80 p-3.5 shadow-float backdrop-blur-xl sm:block lg:-right-8">
               <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
                 ats formatting
               </span>
@@ -301,7 +301,7 @@ export default function HeroSection() {
                 </span>
                 <span className="font-mono text-[10px] text-faint">/100</span>
               </p>
-              <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.07]">
+              <div className="mt-3 h-1 overflow-hidden rounded-full bg-tint-3">
                 <span className="block h-full w-[92%] rounded-full bg-gradient-to-r from-secondary/70 to-secondary" />
               </div>
             </div>

@@ -95,7 +95,7 @@ export default function ScoreBreakdown({
                   </span>
                 </span>
               </div>
-              <span className="block h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+              <span className="block h-1.5 overflow-hidden rounded-full bg-tint-3">
                 <span
                   data-sb-fill
                   className="block h-full origin-left rounded-full"
@@ -110,7 +110,7 @@ export default function ScoreBreakdown({
         })}
       </div>
 
-      <div className="mt-7 border-t border-white/[0.06] pt-5">
+      <div className="mt-7 border-t border-line-soft pt-5">
         <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-faint">
           domain keyword density
         </p>
@@ -121,7 +121,7 @@ export default function ScoreBreakdown({
           ].map((d) => (
             <div
               key={d.label}
-              className="rounded-xl border border-white/[0.06] bg-void/40 px-3.5 py-3"
+              className="rounded-xl border border-line-soft bg-void/40 px-3.5 py-3"
             >
               <p className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-faint">
                 {d.label}

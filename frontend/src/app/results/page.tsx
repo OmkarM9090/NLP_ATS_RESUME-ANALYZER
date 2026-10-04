@@ -218,7 +218,7 @@ function ResultsInner() {
 
   return (
     <main ref={rootRef} className="relative min-h-screen px-5 pb-24 pt-28 sm:px-8 lg:pt-32">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[460px] bg-[radial-gradient(ellipse_55%_100%_at_50%_0%,rgba(110,86,248,0.13),transparent)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[460px] ambient-top" />
 
       <div className="relative mx-auto max-w-6xl">
         {/* ------------------------------- header ------------------------- */}
@@ -282,7 +282,7 @@ function ResultsInner() {
             <span
               data-nav-pill
               aria-hidden
-              className="pointer-events-none absolute left-0 top-0 h-full rounded-full bg-white/[0.08] opacity-0 ring-1 ring-white/[0.06]"
+              className="pointer-events-none absolute left-0 top-0 h-full rounded-full bg-tint-4 opacity-0 ring-1 ring-line-soft"
               style={{ width: 0 }}
             />
             {NAV.map((n) => (
@@ -298,7 +298,7 @@ function ResultsInner() {
           </div>
           <Link
             href="/analyze"
-            className="hidden whitespace-nowrap rounded-full px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-secondary transition-colors hover:bg-white/[0.06] sm:block"
+            className="hidden whitespace-nowrap rounded-full px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-secondary transition-colors hover:bg-tint-3 sm:block"
           >
             new analysis
           </Link>
@@ -360,7 +360,7 @@ function ResultsInner() {
             <MetadataStrip meta={result.nlp_metadata} />
           </div>
 
-          <div data-enter-scroll className="border-t border-white/[0.06] pt-10">
+          <div data-enter-scroll className="border-t border-line-soft pt-10">
             <ResultsActions result={result} />
           </div>
         </div>

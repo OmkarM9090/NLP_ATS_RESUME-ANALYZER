@@ -68,13 +68,13 @@ export default function PipelineTicker() {
   return (
     <section
       aria-label="NLP pipeline stages"
-      className="relative border-y border-white/[0.06] bg-abyss/60 py-7"
+      className="relative border-y border-line-soft bg-abyss/60 py-7"
     >
       <div className="mx-auto mb-5 flex max-w-7xl items-center gap-4 px-5 sm:px-8">
         <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-faint">
           inside the engine
         </span>
-        <span className="h-px flex-1 bg-gradient-to-r from-white/[0.1] to-transparent" />
+        <span className="h-px flex-1 bg-gradient-to-r from-line-strong to-transparent" />
         <span className="hidden font-mono text-[10px] uppercase tracking-[0.28em] text-secondary/80 sm:block">
           deterministic · inspectable
         </span>
@@ -88,13 +88,13 @@ export default function PipelineTicker() {
               aria-hidden={i >= STAGES.length}
               className="group flex items-center gap-3 px-5"
             >
-              <span className="font-mono text-[10px] tabular-nums text-white/20">
+              <span className="font-mono text-[10px] tabular-nums text-faint">
                 {String((i % STAGES.length) + 1).padStart(2, "0")}
               </span>
               <span className="whitespace-nowrap font-display text-[15px] font-medium tracking-[-0.01em] text-mist transition-colors duration-300 group-hover:text-ink">
                 {stage}
               </span>
-              <span className="h-1 w-1 rounded-full bg-white/[0.14]" />
+              <span className="h-1 w-1 rounded-full bg-tint-4" />
             </div>
           ))}
         </div>

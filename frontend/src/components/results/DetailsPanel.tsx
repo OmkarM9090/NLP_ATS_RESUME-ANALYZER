@@ -70,8 +70,8 @@ export function SectionAccordion({ sections }: { sections: SectionScores }) {
               className={cn(
                 "overflow-hidden rounded-xl border transition-colors duration-300",
                 isOpen
-                  ? "border-white/[0.12] bg-white/[0.035]"
-                  : "border-white/[0.06] bg-white/[0.015] hover:border-white/[0.1]",
+                  ? "border-line-ui-strong bg-tint-2"
+                  : "border-line-soft bg-tint-1 hover:border-line-ui",
               )}
             >
               <button
@@ -83,7 +83,7 @@ export function SectionAccordion({ sections }: { sections: SectionScores }) {
                 <span className="w-[104px] shrink-0 truncate font-display text-[13.5px] font-semibold capitalize">
                   {name}
                 </span>
-                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-tint-3">
                   <span
                     className="block h-full origin-left rounded-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     style={{
@@ -114,7 +114,7 @@ export function SectionAccordion({ sections }: { sections: SectionScores }) {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <div className="border-t border-white/[0.06] px-4 py-4">
+                    <div className="border-t border-line-soft px-4 py-4">
                       <p className="text-[13.5px] leading-relaxed text-mist">
                         {s.feedback}
                       </p>
@@ -212,7 +212,7 @@ export function ATSChecklist({ ats }: { ats: ATSFormatting }) {
             <span
               key={t}
               className={cn(
-                "rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em]",
+                "rounded-md border border-line-soft bg-tint-1 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em]",
                 ISSUE_COLOR[t],
               )}
             >

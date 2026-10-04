@@ -61,8 +61,8 @@ export default function CTASection() {
 
   return (
     <section ref={scope} className="relative overflow-hidden py-28 sm:py-36">
-      <div className="cta-glow pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(110,86,248,0.22),transparent_65%)] blur-[40px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
+      <div className="cta-glow pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full ambient-center blur-[40px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
 
       <div className="relative mx-auto max-w-3xl px-5 text-center sm:px-8">
         <p className="eyebrow justify-center">

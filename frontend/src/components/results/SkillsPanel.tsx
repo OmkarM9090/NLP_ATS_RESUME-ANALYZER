@@ -39,7 +39,7 @@ export default function SkillsPanel({ skills }: { skills: SkillsAnalysis }) {
       hint: "present in both documents",
       icon: CheckCircle2,
       tone: "success" as const,
-      chip: "border-success/25 bg-success/[0.08] text-emerald-300",
+      chip: "border-success/25 bg-success/[0.08] text-success",
       empty: "No exact skill matches detected — review the posting's required stack.",
     },
     {
@@ -48,7 +48,7 @@ export default function SkillsPanel({ skills }: { skills: SkillsAnalysis }) {
       hint: "required by the posting",
       icon: XCircle,
       tone: "danger" as const,
-      chip: "border-danger/25 bg-danger/[0.08] text-red-300",
+      chip: "border-danger/25 bg-danger/[0.08] text-danger",
       empty: "Nothing missing — your resume covers every JD skill detected.",
     },
   ];
@@ -128,8 +128,8 @@ export default function SkillsPanel({ skills }: { skills: SkillsAnalysis }) {
                   data-chip
                   className="rounded-lg border border-warning/20 bg-warning/[0.06] px-2.5 py-2"
                 >
-                  <p className="font-mono text-[11px] text-amber-200">
-                    {p.resume} <span className="text-amber-200/50">↔</span> {p.jd}
+                  <p className="font-mono text-[11px] text-warning">
+                    {p.resume} <span className="text-warning/50">↔</span> {p.jd}
                   </p>
                   <p className="mt-0.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-faint">
                     {Math.round(p.similarity * 100)}% similar
@@ -159,7 +159,7 @@ export default function SkillsPanel({ skills }: { skills: SkillsAnalysis }) {
               <span
                 key={s}
                 data-chip
-                className="rounded-lg border border-white/[0.07] bg-white/[0.03] px-2 py-1 font-mono text-[11px] leading-none text-mist"
+                className="rounded-lg border border-line-soft bg-tint-1 px-2 py-1 font-mono text-[11px] leading-none text-mist"
               >
                 {s}
               </span>

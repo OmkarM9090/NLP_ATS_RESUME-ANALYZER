@@ -39,24 +39,37 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0c11",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0b0f" },
+  ],
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
 };
 
+/**
+ * Resolves the theme before first paint: an explicit choice from a previous
+ * visit wins, otherwise the OS preference decides. Kept inline (and tiny) so
+ * the page never flashes the wrong mode.
+ */
+const THEME_SCRIPT = `(function(){try{var s=localStorage.getItem("resumeai:theme");var t=s==="light"||s==="dark"?s:(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");var r=document.documentElement;r.classList.toggle("dark",t==="dark");r.style.colorScheme=t;}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="relative min-h-screen bg-night font-sans text-ink antialiased">
-        {/* ambient page backdrop — kept extremely subtle, sits under everything */}
+        {/* ambient page backdrop — two very low-contrast washes, no more */}
         <div
           aria-hidden
           className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-night"
         >
-          <div className="absolute inset-0 grid-lines opacity-60 [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,black,transparent)]" />
-          <div className="absolute -left-[18%] top-[-12%] h-[620px] w-[620px] rounded-full bg-primary/[0.13] blur-[190px]" />
-          <div className="absolute right-[-14%] top-[28%] h-[520px] w-[520px] rounded-full bg-secondary/[0.07] blur-[200px]" />
+          <div className="absolute inset-0 grid-lines opacity-70 [mask-image:radial-gradient(ellipse_80%_60%_at_50%_0%,black,transparent)]" />
+          <div className="absolute -left-[16%] top-[-14%] h-[560px] w-[560px] rounded-full bg-glow-primary blur-[190px]" />
+          <div className="absolute right-[-12%] top-[30%] h-[480px] w-[480px] rounded-full bg-glow-secondary blur-[200px]" />
         </div>
 
         <ScrollProgress />

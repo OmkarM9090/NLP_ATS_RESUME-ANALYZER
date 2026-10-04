@@ -93,7 +93,7 @@ export default function PricingSection() {
 
   return (
     <section ref={scope} id="pricing" className="relative scroll-mt-24 py-24 sm:py-32">
-      <div className="pointer-events-none absolute bottom-0 left-1/2 h-[340px] w-[820px] -translate-x-1/2 rounded-full bg-primary/[0.09] blur-[170px]" />
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-[340px] w-[820px] -translate-x-1/2 rounded-full bg-glow-primary blur-[170px]" />
 
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHeading
@@ -115,12 +115,12 @@ export default function PricingSection() {
               className={cn(
                 "card relative flex flex-col p-6 sm:p-7",
                 tier.featured
-                  ? "ring-gradient bg-[linear-gradient(180deg,rgba(110,86,248,0.14),rgba(14,16,22,0.7))] shadow-[0_50px_110px_-50px_rgba(110,86,248,0.9)] md:-my-3 md:py-9"
+                  ? "tier-featured ring-gradient shadow-float md:-my-3 md:py-9"
                   : "card-hover",
               )}
             >
               {tier.featured && (
-                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r from-primary-2 to-primary px-3 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-white shadow-[0_10px_24px_-12px_rgba(110,86,248,1)]">
+                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gradient-to-r from-primary-2 to-primary px-3 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-white shadow-[0_8px_20px_-12px_rgba(9,9,11,0.45)]">
                   <Sparkles className="h-3 w-3" strokeWidth={2.4} />
                   most popular
                 </span>
@@ -142,7 +142,7 @@ export default function PricingSection() {
               </p>
               <p className="mt-3 text-[13.5px] leading-relaxed text-mist">{tier.blurb}</p>
 
-              <div className="my-6 h-px bg-gradient-to-r from-white/[0.1] to-transparent" />
+              <div className="my-6 h-px bg-gradient-to-r from-line-strong to-transparent" />
 
               <ul className="flex-1 space-y-3">
                 {tier.features.map((f) => (
@@ -150,7 +150,7 @@ export default function PricingSection() {
                     <span
                       className={cn(
                         "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full",
-                        tier.featured ? "bg-primary/25" : "bg-white/[0.07]",
+                        tier.featured ? "bg-primary/25" : "bg-tint-3",
                       )}
                     >
                       <Check
