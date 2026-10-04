@@ -58,6 +58,17 @@ class FileValidationError(ATSError):
     default_message = "The uploaded file is not valid."
 
 
+class InvalidRequestError(ATSError):
+    """A request parameter (form field, query arg) could not be understood.
+
+    Uses the same ``validation_error`` code as FastAPI's own request validation
+    handler so clients only need to special-case one 422 shape.
+    """
+
+    status_code = 422
+    code = "validation_error"
+
+
 class UnsupportedFileTypeError(FileValidationError):
     status_code = 415
     code = "unsupported_file_type"
@@ -161,6 +172,7 @@ class RateLimitExceededError(ATSError):
 __all__ = [
     "ATSError",
     "FileValidationError",
+    "InvalidRequestError",
     "UnsupportedFileTypeError",
     "FileTooLargeError",
     "EmptyFileError",

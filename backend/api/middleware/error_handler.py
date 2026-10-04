@@ -29,6 +29,7 @@ from typing import Any, Optional
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from config import settings
@@ -64,6 +65,18 @@ def _envelope(
     return JSONResponse(status_code=status_code, content=payload, headers=headers or {})
 
 
+def _retry_after_seconds(detail: str) -> int:
+    """Best-effort Retry-After from slowapi's "10 per 1 minute" message."""
+    lowered = (detail or "").lower()
+    if "second" in lowered:
+        return 1
+    if "hour" in lowered:
+        return 3600
+    if "day" in lowered:
+        return 86400
+    return 60
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     """Attach every handler to the application."""
 
@@ -92,6 +105,28 @@ def register_exception_handlers(app: FastAPI) -> None:
             request=request,
             status_code=status_code,
             headers=headers,
+        )
+
+    @app.exception_handler(RateLimitExceeded)
+    async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+        """slowapi's 429 re-shaped into this API's standard error envelope."""
+        limit_detail = getattr(exc, "detail", "") or str(exc)
+        retry_after = _retry_after_seconds(limit_detail)
+        logger.warning(
+            "rate_limit_exceeded",
+            extra={
+                "path": request.url.path,
+                "client": request.client.host if request.client else "unknown",
+                "limit": limit_detail,
+            },
+        )
+        return _envelope(
+            "Too many requests. Please wait before analysing another resume.",
+            code="rate_limit_exceeded",
+            detail=limit_detail,
+            request=request,
+            status_code=429,
+            headers={"Retry-After": str(retry_after)},
         )
 
     @app.exception_handler(RequestValidationError)

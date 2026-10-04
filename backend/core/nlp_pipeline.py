@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import re
 import time
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from config import settings
 from core.text_cleaner import TextCleaner, text_cleaner
@@ -91,29 +91,54 @@ class NLPPipeline:
     # ------------------------------------------------------------------ #
     # Main entry point
     # ------------------------------------------------------------------ #
-    def process(self, raw_text: str, *, source: str = "document",
-                is_ocr_text: bool = False) -> ProcessedDocument:
-        """Run every pipeline stage over ``raw_text``."""
+    def process(
+        self,
+        raw_text: str,
+        *,
+        source: str = "document",
+        is_ocr_text: bool = False,
+        progress: Optional[Callable[[str, float], None]] = None,
+    ) -> ProcessedDocument:
+        """Run every pipeline stage over ``raw_text``.
+
+        ``progress`` is an optional ``(stage_name, fraction)`` callback so the
+        caller can surface the individual NLP stages (cleaning, tokenizing,
+        stop-word removal, lemmatisation, POS tagging, NER) instead of a single
+        opaque "running the pipeline" step.
+        """
         started = time.perf_counter()
         stages: List[str] = []
 
+        def emit(stage: str, fraction: float) -> None:
+            stages.append(stage)
+            if progress is None:
+                return
+            try:
+                progress(stage, fraction)
+            except Exception as exc:  # noqa: BLE001 - progress is best effort
+                logger.debug("pipeline_progress_failed", extra={"error": str(exc)})
+
         # 1. Cleaning / normalisation ------------------------------------ #
+        emit("cleaning_text", 0.10)
         cleaned: CleanedText = self.cleaner.clean(raw_text, is_ocr_text=is_ocr_text)
-        stages.append("text_cleaning")
 
         # 2-6. Tokenization / stop words / lemmas / POS / deps ----------- #
+        emit("tokenizing", 0.35)
         doc = self.tokenizer.make_doc(cleaned.cleaned_text)
+        emit("pos_tagging", 0.50)
         tokenized: TokenizedText = self.tokenizer.annotate(doc)
-        stages.extend(["tokenization", "pos_tagging", "lemmatization", "dependency_parsing"])
 
-        # 3. Stop-word removal (domain aware) ----------------------------- #
+        # 3-4. Stop-word removal (domain aware) --------------------------- #
+        emit("removing_stop_words", 0.65)
         filtered = self.get_filtered_tokens(doc)
         bigrams = self.get_bigrams(filtered)
-        stages.append("stopword_removal")
+
+        # 5. Lemmatisation ------------------------------------------------ #
+        emit("lemmatizing", 0.80)
 
         # 6. Named entity recognition ------------------------------------- #
+        emit("entity_recognition", 0.95)
         entities = self.extract_entities(doc)
-        stages.append("ner")
 
         lemmas = dedupe_preserve_order(
             t.lemma for t in tokenized.tokens if t.lemma and not t.is_punct

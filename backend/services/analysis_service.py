@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import settings
@@ -34,7 +35,7 @@ from core.entity_extractor import EntityExtractor
 from core.gap_analyzer import GapAnalyzer
 from core.keyword_extractor import KeywordExtractor
 from core.nlp_pipeline import NLPPipeline
-from core.pdf_extractor import PDFExtractor
+from core.pdf_extractor import OCRSupport, PDFExtractor
 from core.report_generator import ReportGenerator
 from core.section_parser import SectionParser
 from core.semantic_analyzer import SemanticAnalyzer
@@ -51,7 +52,12 @@ from models.schemas import (
     SkillsAnalysis,
 )
 from services.cache_service import ModelRegistry, model_registry
-from utils.exceptions import ATSError, InsufficientTextError, NLPProcessingError
+from utils.exceptions import (
+    ATSError,
+    InsufficientTextError,
+    NLPProcessingError,
+    UnsupportedFileTypeError,
+)
 from utils.logger import get_logger, log_stage
 from utils.text_utils import clamp, dedupe_preserve_order, truncate
 
@@ -139,12 +145,18 @@ class AnalysisService:
         warnings: List[str] = []
         top_n = top_keywords or settings.top_keywords
 
+        last_pct = 0.0
+
         def report(stage: str, pct: float) -> None:
+            """Record a pipeline stage. Percentages never go backwards."""
+            nonlocal last_pct
+            pct = max(pct, last_pct)
+            last_pct = pct
             stages.append(stage)
             log_stage(logger, stage, progress=pct)
             if progress:
                 try:
-                    progress(stage, pct)
+                    progress(stage, round(pct, 4))
                 except Exception as exc:  # noqa: BLE001 - progress is best effort
                     logger.debug("progress_callback_failed", extra={"error": str(exc)})
 
@@ -154,18 +166,28 @@ class AnalysisService:
             resume_doc = self._extract(resume_bytes, resume_filename)
             jd_doc = self._extract(jd_bytes, jd_filename)
             warnings.extend(resume_doc.warnings + jd_doc.warnings)
+            warnings.extend(self._degradation_warnings())
 
             # 2-7. Cleaning / tokens / stop words / lemmas / POS / NER ------- #
-            report("running_nlp_pipeline", 0.25)
+            # Each document walks the same six sub-stages, mapped into its own
+            # progress window so the UI loader keeps moving forward.
+            def resume_progress(stage: str, fraction: float) -> None:
+                report(stage, 0.05 + fraction * 0.13)
+
+            def jd_progress(stage: str, fraction: float) -> None:
+                report(stage, 0.18 + fraction * 0.10)
+
             resume_processed = self.nlp_pipeline.process(
-                resume_doc.full_text, source="resume", is_ocr_text=resume_doc.is_scanned
+                resume_doc.full_text, source="resume", is_ocr_text=resume_doc.is_scanned,
+                progress=resume_progress,
             )
             jd_processed = self.nlp_pipeline.process(
-                jd_doc.full_text, source="job_description", is_ocr_text=jd_doc.is_scanned
+                jd_doc.full_text, source="job_description", is_ocr_text=jd_doc.is_scanned,
+                progress=jd_progress,
             )
 
             # 8. Section parsing -------------------------------------------- #
-            report("parsing_sections", 0.40)
+            report("parsing_sections", 0.30)
             resume_sections = self.section_parser.parse_sections(
                 resume_processed.cleaned.cleaned_text, source="resume"
             )
@@ -174,7 +196,7 @@ class AnalysisService:
             )
 
             # 7b. Entity extraction ----------------------------------------- #
-            report("extracting_entities", 0.50)
+            report("extracting_entities", 0.38)
             resume_entities = self.entity_extractor.extract_resume_entities(
                 resume_processed.cleaned.cleaned_text,
                 self._doc_for(resume_processed),
@@ -186,7 +208,7 @@ class AnalysisService:
             )
 
             # 9. Keyword extraction & comparison ----------------------------- #
-            report("extracting_keywords", 0.62)
+            report("extracting_keywords", 0.50)
             tfidf_cosine, top_jd_keywords, top_resume_keywords, common_keywords = (
                 self.keyword_extractor.compare(
                     resume_processed.cleaned.cleaned_text,
@@ -218,7 +240,7 @@ class AnalysisService:
             )
 
             # 10. Skill matching -------------------------------------------- #
-            report("matching_skills", 0.72)
+            report("matching_skills", 0.60)
             resume_skills = resume_entities.skills or self.entity_extractor.extract_skills(
                 resume_processed.cleaned.cleaned_text
             )
@@ -228,7 +250,8 @@ class AnalysisService:
             skill_match = self.skill_matcher.match_skills(resume_skills, jd_skills)
 
             # 11. Semantic similarity --------------------------------------- #
-            report("computing_semantic_similarity", 0.80)
+            report("vectorizing", 0.66)
+            report("computing_semantic_similarity", 0.72)
             semantic_variant = self.semantic_analyzer.variant
             section_text_map = {
                 name: info.text for name, info in resume_sections.items() if info.text.strip()
@@ -241,7 +264,7 @@ class AnalysisService:
             )
 
             # 12. Scoring ---------------------------------------------------- #
-            report("computing_scores", 0.88)
+            report("computing_scores", 0.85)
             scoring = self.similarity_engine.compute_full_score(
                 tfidf_cosine=tfidf_cosine,
                 jd_keywords=top_jd_keywords,
@@ -266,7 +289,7 @@ class AnalysisService:
             )
 
             # 13. Gap analysis ---------------------------------------------- #
-            report("analyzing_gaps", 0.93)
+            report("analyzing_gaps", 0.92)
             gap_analysis = self.gap_analyzer.analyze_gaps(
                 resume_entities=resume_entities,
                 jd_entities=jd_entities,
@@ -280,7 +303,7 @@ class AnalysisService:
             )
 
             # 14. ATS check + recommendations -------------------------------- #
-            report("generating_report", 0.97)
+            report("generating_report", 0.96)
             ats_check = self.report_generator.generate_ats_check(
                 raw_text=resume_doc.full_text,
                 extracted=resume_doc,
@@ -306,7 +329,7 @@ class AnalysisService:
                 jd_extraction_method=jd_doc.extraction_method.value,
                 resume_is_scanned=resume_doc.is_scanned,
                 jd_is_scanned=jd_doc.is_scanned,
-                pipeline_stages_completed=dedupe_preserve_order(stages),
+                pipeline_stages_completed=dedupe_preserve_order(stages + ["complete"]),
                 degraded_mode=self.registry.degraded,
                 warnings=dedupe_preserve_order(warnings),
             )
@@ -399,8 +422,49 @@ class AnalysisService:
     # ------------------------------------------------------------------ #
     # Helpers
     # ------------------------------------------------------------------ #
+    def _degradation_warnings(self) -> List[str]:
+        """Human-readable notes about any fallback model in use.
+
+        ``nlp_metadata.degraded_mode`` says *that* quality is reduced; these
+        warnings say *why*, so the UI and the logs tell the same story.
+        """
+        notes: List[str] = []
+        try:
+            status = self.registry.status()
+        except Exception:  # noqa: BLE001 - status reporting must never fail a run
+            return notes
+
+        nlp = status.get("spacy")
+        if nlp is not None and nlp.loaded and nlp.variant != "statistical":
+            notes.append(
+                "spaCy model weights are unavailable, so linguistic analysis is running on the "
+                "built-in offline heuristics. Install en_core_web_lg for full accuracy."
+            )
+        encoder = status.get("sentence_transformer")
+        if encoder is not None and not encoder.loaded:
+            notes.append(
+                "sentence-transformers weights are unavailable, so semantic similarity uses the "
+                "TF-IDF/LSA fallback. Scores remain comparable but are less nuanced."
+            )
+        if not OCRSupport.is_available() and settings.enable_ocr_fallback:
+            notes.append(
+                "OCR (tesseract/poppler) is not installed, so scanned or image-only documents "
+                "cannot be read."
+            )
+        return notes
+
     def _extract(self, file_bytes: bytes, filename: str) -> ExtractedText:
         """Stage 1 — extract text, enforcing the minimum-length contract."""
+        suffix = Path(filename or "").suffix.lower()
+        allowed = {ext.lower() for ext in settings.allowed_extensions}
+        if suffix and suffix not in allowed:
+            # The API layer validates first; this keeps the service honest when
+            # it is called directly (CLI, tests, background jobs).
+            raise UnsupportedFileTypeError(
+                f"The file type '{suffix}' is not supported. Allowed types: "
+                f"{', '.join(sorted(allowed))}.",
+                context={"filename": filename, "extension": suffix},
+            )
         extracted = self.pdf_extractor.extract(file_bytes, filename)
         chars = len(extracted.full_text.strip())
         if chars < settings.min_extracted_chars:

@@ -156,7 +156,13 @@ class FileValidator:
     @staticmethod
     def sanitize_filename(name: str, max_length: int = 180) -> str:
         """Strip path components and unsafe characters from a filename."""
-        name = os.path.basename(name or "").replace("\x00", "").strip()
+        # basename() is platform-specific: on POSIX it leaves "C:\\dir\\file.pdf"
+        # intact, so split on both separators explicitly.
+        raw = (name or "").replace("\x00", "")
+        for separator in ("\\", "/"):
+            if separator in raw:
+                raw = raw.rsplit(separator, 1)[-1]
+        name = os.path.basename(raw).strip()
         name = _SAFE_NAME_RE.sub("_", name)
         return name[:max_length] or "document"
 

@@ -532,8 +532,11 @@ _DEGREE_FIELD_TERMS = [
 
 
 def re_search_any(text: str, needles: Sequence[str]) -> bool:
-    """True when any needle appears in ``text`` (substring match)."""
-    return any(needle in text for needle in needles)
+    """True when any needle appears in ``text`` (case-insensitive substring match)."""
+    if not text or not needles:
+        return False
+    lowered = text.lower()
+    return any(needle.lower() in lowered for needle in needles if needle)
 
 
 __all__ = [

@@ -34,7 +34,7 @@ from config import settings
 from models.database import session_scope
 from models.schemas import AnalysisResponse, ErrorResponse
 from services.analysis_service import get_analysis_service
-from utils.exceptions import AnalysisTimeoutError, FileValidationError
+from utils.exceptions import AnalysisTimeoutError, FileValidationError, InvalidRequestError
 from utils.file_validator import file_validator
 from utils.logger import get_logger
 
@@ -68,7 +68,7 @@ def _parse_weights(raw: Optional[str]) -> Optional[Dict[str, float]]:
             except ValueError:
                 continue
         if not weights:
-            raise FileValidationError(
+            raise InvalidRequestError(
                 "The 'weights' field must be a JSON object such as "
                 '{"keyword_match": 0.25, "semantic_similarity": 0.30}.',
                 context={"field": "weights", "received": text[:120]},

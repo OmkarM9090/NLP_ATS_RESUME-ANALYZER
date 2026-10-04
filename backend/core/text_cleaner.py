@@ -22,6 +22,7 @@ from config import settings
 from models.schemas import CleanedText, ExtractedContacts
 from utils.logger import get_logger
 from utils.text_utils import (
+    PROTECTED_TERMS,
     collapse_whitespace,
     dedupe_preserve_order,
     fix_ocr_artifacts,
@@ -33,11 +34,11 @@ logger = get_logger(__name__)
 
 EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b")
 URL_RE = re.compile(
-    r"(?i)\b(?:https?://|www\.)[a-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+"
+    r"(?i)(?<![\w@])(?:https?://|www\.)[a-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+"
 )
 # Bare domains used on resumes for portfolios/profiles (no scheme, no "www").
 BARE_DOMAIN_RE = re.compile(
-    r"""(?i)\b(?:
+    r"""(?i)(?<![\w@.+\-])(?:
         (?:linkedin|github|gitlab|bitbucket|kaggle|medium|behance|dribbble|
          stackoverflow|dev)\.(?:com|org|net|io|to)\b
         |[a-z0-9][\w\-]{1,40}\.(?:com|io|dev|me|ai|xyz|tech|org|net|co|dev)\b
@@ -49,10 +50,17 @@ PHONE_RE = re.compile(
 )
 # Keep hyphens/plus/dot/slash inside compound technical tokens.
 COMPOUND_RE = re.compile(r"\b[A-Za-z0-9]+(?:[+#./\-][A-Za-z0-9]+)+\b")
-SPECIAL_CHARS_RE = re.compile(r"[^\w\s.,;:!?'\"()\[\]/&+@#%\-—–\n]")
+# Currency symbols must survive cleaning — salary extraction depends on them.
+SPECIAL_CHARS_RE = re.compile(r"[^\w\s.,;:!?'\"()\[\]/&+@#%$£€₹¥\-—–\n]")
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(])")
 MULTI_SPACE_RE = re.compile(r"[ \t]{2,}")
 CONTROL_LINE_RE = re.compile(r"^[\s\W_]*$", re.UNICODE)
+
+#: Technology names that look exactly like domains and must stay in the text.
+_PROTECTED_URL_LOOKALIKES = frozenset(
+    term.lower() for term in PROTECTED_TERMS if "." in term or "/" in term
+) | {".net", "asp.net", "node.js", "next.js", "vue.js", "react.js", "express.js",
+     "nuxt.js", "angular.js", "tensorflow.js", "three.js", "d3.js", "chart.js"}
 
 # OCR mis-reads that appear when a scanned resume is read back.
 _OCR_LINE_FIXES: Tuple[Tuple[str, str], ...] = (
@@ -135,12 +143,17 @@ class TextCleaner:
 
         def _replace_url(match: re.Match[str]) -> str:
             value = match.group(0).strip().rstrip(".,;:)")
-            urls.append(value.lower())
+            lowered = value.lower()
+            if lowered in _PROTECTED_URL_LOOKALIKES:
+                return value  # "asp.net", "node.js" — a framework, not a website
+            urls.append(lowered)
             return " "
 
+        # Order matters: emails first, otherwise the bare-domain pattern eats
+        # the "@example.com" half of an address and leaves "john.doe@" behind.
+        text = EMAIL_RE.sub(_replace_email, text)
         text = URL_RE.sub(_replace_url, text)
         text = BARE_DOMAIN_RE.sub(_replace_url, text)
-        text = EMAIL_RE.sub(_replace_email, text)
 
         # Phone detection runs after URLs/emails so their digits are gone.
         def _replace_phone(match: re.Match[str]) -> str:

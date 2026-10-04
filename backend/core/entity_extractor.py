@@ -25,7 +25,7 @@ from models.schemas import CleanedText, JobDescriptionEntities, ResumeEntities, 
 from services.cache_service import load_json
 from config import settings
 from utils.logger import get_logger
-from utils.text_utils import dedupe_preserve_order, titleize
+from utils.text_utils import dedupe_preserve_order, strip_bullets, titleize
 
 logger = get_logger(__name__)
 
@@ -269,7 +269,7 @@ class EntityExtractor:
                     self._degree_patterns.append((pattern, str(level), str(surface)))
 
         for surface in self.gazetteers.get("certifications", []):
-            pattern = self._boundary_regex(str(surface))
+            pattern = self._boundary_regex(str(surface), separator_tolerant=True)
             if pattern:
                 self._cert_patterns.append((pattern, str(surface)))
         for surface in self.gazetteers.get("degrees", []):
@@ -313,7 +313,11 @@ class EntityExtractor:
         )
 
     @staticmethod
-    def _boundary_regex(surface: str, case_sensitive: bool = False) -> Optional[re.Pattern[str]]:
+    def _boundary_regex(
+        surface: str,
+        case_sensitive: bool = False,
+        separator_tolerant: bool = False,
+    ) -> Optional[re.Pattern[str]]:
         """Build a regex that matches ``surface`` on token boundaries.
 
         Handles symbols (``C++``, ``C#``, ``.NET``, ``CI/CD``) by only applying
@@ -328,6 +332,12 @@ class EntityExtractor:
         # Allow an optional trailing possessive/plural. Ambiguous single-word
         # aliases (Go, Rust, Spark) are matched with their own capitalisation
         # so ordinary English usage does not register as a skill.
+        if separator_tolerant:
+            # "AWS Certified Machine Learning Specialty" must also match the
+            # hyphenated form printed on most certificates.
+            escaped = re.sub(
+                r"(?:\\?\s)+", lambda _match: "[\\s\\-\u2013\u2014/]+", escaped
+            )
         flags = 0 if case_sensitive else re.IGNORECASE
         if case_sensitive:
             capitalized = surface if surface[0].isupper() else surface.capitalize()
@@ -645,6 +655,27 @@ class EntityExtractor:
         found.extend(self._longest_matches(text, self._cert_patterns))
         return dedupe_preserve_order(found)[:15]
 
+    @staticmethod
+    def _certifications_from_section(section_text: str, limit: int = 12) -> List[str]:
+        """Read certificate names straight off a CERTIFICATIONS section.
+
+        Gazetteers cannot cover every vendor ("Google Professional Data
+        Engineer"), so the section's own lines are the source of truth.
+        """
+        found: List[str] = []
+        for line in section_text.split("\n"):
+            candidate = strip_bullets(line).strip(" ,;:-\u2013\u2014|")
+            if not candidate or len(candidate) > 120:
+                continue
+            words = candidate.split()
+            if len(words) < 2 or len(words) > 14:
+                continue
+            letters = sum(char.isalpha() for char in candidate)
+            if letters < 8 or letters / max(len(candidate), 1) < 0.6:
+                continue
+            found.append(titleize(candidate))
+        return dedupe_preserve_order(found)[:limit]
+
     # ------------------------------------------------------------------ #
     # People / organisations / places
     # ------------------------------------------------------------------ #
@@ -776,9 +807,10 @@ class EntityExtractor:
         degrees = self.extract_degrees(
             sections.get("education", SectionInfo(name="education")).text or text, doc
         )
-        certifications = self.extract_certifications(
-            sections.get("certifications", SectionInfo(name="certifications")).text or text, doc
-        )
+        cert_section = sections.get("certifications", SectionInfo(name="certifications")).text
+        certifications = self.extract_certifications(cert_section or text, doc)
+        if not certifications and cert_section:
+            certifications = self._certifications_from_section(cert_section)
         contacts = cleaned.extracted_contacts if cleaned else None
 
         return ResumeEntities(

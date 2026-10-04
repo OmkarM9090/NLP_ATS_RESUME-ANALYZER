@@ -37,6 +37,10 @@ def cosine(a: np.ndarray, b: np.ndarray) -> float:
     """Cosine similarity between two vectors, clamped to ``[0, 1]``."""
     if a is None or b is None or a.size == 0 or b.size == 0:
         return 0.0
+    if a.ravel().shape != b.ravel().shape:
+        # Different encoders (or a stale cache) can hand back different widths;
+        # a mismatch carries no signal, so treat it as "no similarity".
+        return 0.0
     denom = float(np.linalg.norm(a) * np.linalg.norm(b))
     if denom == 0.0:
         return 0.0

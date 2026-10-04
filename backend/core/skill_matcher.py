@@ -24,7 +24,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 from config import settings
 from models.schemas import PartialSkillMatch, SkillMatchResult
 from utils.logger import get_logger
-from utils.text_utils import clamp, dedupe_preserve_order, safe_ratio
+from utils.text_utils import clamp, collapse_whitespace, dedupe_preserve_order, safe_ratio
 
 logger = get_logger(__name__)
 
@@ -87,7 +87,7 @@ class SkillMatcher:
     # ------------------------------------------------------------------ #
     def canonicalize(self, skill: str) -> str:
         """Map any skill surface form to its canonical taxonomy name."""
-        cleaned = (skill or "").strip()
+        cleaned = collapse_whitespace((skill or "").strip())
         if not cleaned:
             return ""
         direct = self._canonical_map.get(cleaned.lower())

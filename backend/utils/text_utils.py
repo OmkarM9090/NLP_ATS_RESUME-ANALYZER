@@ -37,7 +37,12 @@ _OCR_FIXES = {
     r"\brn\b": "m", r"\bcl\b": "d", r"\bvvh\b": "w", r"\btl\b": "h",
     r"(?<=[a-z])0(?=[a-z])": "o", r"(?<=[a-z])1(?=[a-z])": "l",
     r"(?<=[a-z])5(?=[a-z])": "s", r"(?<=[a-z])8(?=[a-z])": "b",
-    r"\s+([,.;:!?])": r"\1", r"([,;:])(?=[A-Za-z])": r"\1 ",
+    r"\s+([,;:!?])": r"\1",
+    # A space before a *dot* is only collapsed when the dot ends the phrase:
+    # "skills ." -> "skills." but "with .NET" must keep its space, otherwise the
+    # bare-domain harvester reads "with.NET" as the URL "with.net" and deletes it.
+    r"\s+\.(?=\s|$)": ".",
+    r"([,;:])(?=[A-Za-z])": r"\1 ",
 }
 
 # Technical tokens that must survive lower-casing/punctuation stripping intact.
@@ -156,18 +161,47 @@ def titleize(text: str) -> str:
         return text
     small = {"of", "and", "for", "in", "on", "with", "to", "the", "a", "an", "at", "or", "from"}
     protected_lookup = {term.lower(): term for term in PROTECTED_TERMS}
+    # An all-caps line ("PAEDIATRIC ICU NURSE") is a heading style, not emphasis:
+    # title-case it instead of preserving every shouty word.
+    shouting = text.strip().isupper()
+
+    def acronym_form(token: str) -> str | None:
+        """Return the display form when ``token`` is made only of known acronyms.
+
+        Handles "(nlp/ml)", "R&D" and "ci/cd" as well as plain "icu".
+        """
+        bare = token.strip(".,;:()[]'\"").lower()
+        if bare in ACRONYM_DISPLAY:
+            return ACRONYM_DISPLAY[bare]
+        if not any(sep in bare for sep in ("/", "&", "-")):
+            return None
+        pieces = re.split(r"([/&\-])", bare)
+        if not all(
+            (not piece) or piece in {"/", "&", "-"} or piece in ACRONYM_DISPLAY
+            for piece in pieces
+        ):
+            return None
+        rebuilt = "".join(
+            ACRONYM_DISPLAY.get(piece, piece) for piece in pieces
+        )
+        # Restore any wrapping punctuation the caller used.
+        prefix = token[: len(token) - len(token.lstrip(".,;:()[]'\""))]
+        suffix = token[len(token.rstrip(".,;:()[]'\"")):]
+        return f"{prefix}{rebuilt}{suffix}"
 
     out: list[str] = []
     for idx, word in enumerate(text.split()):
         bare = word.strip(".,;:()[]'\"").lower()
-        if bare in ACRONYM_DISPLAY:
-            out.append(word.replace(bare, ACRONYM_DISPLAY[bare]) if word.lower() != bare else ACRONYM_DISPLAY[bare])
+
+        acronym = acronym_form(word)
+        if acronym:
+            out.append(acronym)
             continue
         if bare in protected_lookup:
-            out.append(word.replace(bare, protected_lookup[bare]) if word.lower() == bare else word)
+            out.append(word if word.lower() != bare else protected_lookup[bare])
             continue
         # Keep an all-caps token as the author wrote it ("ICU", "AWS").
-        if word.isupper() and len(bare) <= 6:
+        if not shouting and word.isupper() and len(bare) <= 6:
             out.append(word)
             continue
         if idx != 0 and bare in small:

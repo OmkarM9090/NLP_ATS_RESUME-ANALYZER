@@ -162,13 +162,20 @@ class SectionParser:
             body = collapse_whitespace("\n".join(body_lines)).strip()
             existing = sections.get(section)
             candidate = self._make_section(section, heading, body, confidence)
-            if existing is None or candidate.word_count > existing.word_count:
-                # Merge duplicate headings (e.g. "SKILLS" appearing twice).
-                if existing is not None:
-                    candidate.text = collapse_whitespace(f"{existing.text}\n{body}").strip()
-                    candidate.line_count = candidate.text.count("\n") + 1
-                    candidate.word_count = len(candidate.text.split())
+            if existing is None:
                 sections[section] = candidate
+            else:
+                # Duplicate heading (e.g. "SKILLS" listed twice): merge the bodies
+                # instead of keeping whichever block happened to be longer.
+                merged = collapse_whitespace(
+                    "\n".join(part for part in (existing.text, body) if part)
+                ).strip()
+                sections[section] = self._make_section(
+                    section,
+                    existing.heading or heading,
+                    merged,
+                    max(existing.confidence, confidence),
+                )
 
         # Anything left with no heading at all.
         if not sections or all(not s.text.strip() for s in sections.values()):

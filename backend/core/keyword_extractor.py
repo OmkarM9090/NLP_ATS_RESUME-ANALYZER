@@ -46,6 +46,29 @@ _MIN_PHRASE_CHARS = 2
 _MAX_PHRASE_CHARS = 40
 
 
+#: Single-character tokens that are legitimate skills rather than noise.
+_PROTECTED_SINGLE = frozenset({"r", "c", "q", "f", "j", "k", "m", "s", "v", "x"})
+
+#: Tokens whose trailing/leading punctuation is part of the name.
+_PROTECTED_PUNCTUATED = frozenset(
+    {"c++", "c#", ".net", "ci/cd", "f#", "a/b", "node.js", "next.js", "vue.js",
+     "react.js", "express.js", "three.js", "d3.js", "tcp/ip", "m/l", "nlp/ml",
+     "ai/ml", "ml/ai", "devops/sre", "golang/go", "js/ts", "html/css"}
+)
+
+#: Words that can never, on their own, form a meaningful keyword.
+_KEYWORD_STOP_WORDS = frozenset(
+    """a an and are as at be been being but by for from had has have having he her
+    his i if in into is it its me my no nor not of on or our out over per she so
+    than that the their them then there these they this those to too under up upon
+    us we were will with within you your also any all both each few more most other
+    some such only own same s t can cannot could did do does doing done would should
+    must may might shall very just about above across after again against because
+    before below between during further here how once since until when where which
+    while who whom why what""".split()
+)
+
+
 class KeywordExtractor:
     """TF-IDF / RAKE / TextRank keyword extraction and comparison."""
 
@@ -103,6 +126,19 @@ class KeywordExtractor:
             return False
         words = cleaned.split()
         if len(words) > 5:
+            return False
+        # Dangling punctuation ("data-", "/ ", "ci/") — but keep "c++", ".net", "ci/cd".
+        if re.fullmatch(r"[\w.]*[\-/,+]+", cleaned) and cleaned.lower() not in _PROTECTED_PUNCTUATED:
+            return False
+        # Stop words carry no ranking signal: reject phrases made only of them
+        # ("and the") and phrases that begin or end with one ("the data").
+        stripped = [word.strip(".,;:()'\"").lower() for word in words]
+        if all(word in _KEYWORD_STOP_WORDS for word in stripped):
+            return False
+        if stripped[0] in _KEYWORD_STOP_WORDS or stripped[-1] in _KEYWORD_STOP_WORDS:
+            return False
+        # Single characters are only meaningful for protected languages/aliases.
+        if len(cleaned) == 1 and cleaned.lower() not in _PROTECTED_SINGLE:
             return False
         return True
 

@@ -56,8 +56,7 @@
     ],
     "Ruby": [
       "ruby",
-      "rb",
-      "ruby on rails"
+      "rb"
     ],
     "PHP": [
       "php",
@@ -83,7 +82,6 @@
       "sql",
       "structured query language",
       "t-sql",
-      "pl/sql",
       "plsql",
       "sql queries"
     ],
@@ -354,7 +352,6 @@
       "s3",
       "lambda",
       "ecs",
-      "eks",
       "cloudformation",
       "athena",
       "redshift",
@@ -373,7 +370,6 @@
       "google cloud",
       "google cloud platform",
       "bigquery",
-      "gke",
       "cloud run",
       "dataflow"
     ],
@@ -400,7 +396,6 @@
       "iac",
       "infrastructure as code",
       "pulumi",
-      "cloudformation",
       "ansible"
     ],
     "Jenkins": [
@@ -678,6 +673,10 @@
       "hdfs"
     ],
     "MLOps": [
+      "ml ops",
+      "machine learning ops",
+      "machine learning operations",
+      "ml operations",
       "mlops",
       "model deployment",
       "model monitoring",
@@ -751,6 +750,11 @@
   },
   "web_mobile": {
     "REST APIs": [
+      "restful api",
+      "restful api design",
+      "rest api design",
+      "rest services",
+      "restful web services",
       "rest",
       "rest api",
       "rest apis",

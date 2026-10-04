@@ -121,8 +121,16 @@ def extract_noun_chunks(doc: Any, *, min_length: int = 3, max_length: int = 60) 
             extra={"error": f"{type(exc).__name__}: {exc}"},
         )
         raw = []
+
+    heuristic = _heuristic_noun_chunks(doc)
     if not raw:
-        raw = _heuristic_noun_chunks(doc)
+        raw = heuristic
+    elif not any(" " in chunk for chunk in raw):
+        # The dependency graph produced only single-token chunks (typical for the
+        # offline heuristic parser). The POS-based chunker recovers the
+        # multi-word phrases keyword extraction depends on.
+        if any(" " in chunk for chunk in heuristic):
+            raw = heuristic
 
     cleaned: List[str] = []
     for chunk in raw:
