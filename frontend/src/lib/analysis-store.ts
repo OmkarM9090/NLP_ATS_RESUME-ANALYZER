@@ -8,9 +8,10 @@ import type { AnalysisResponse } from "../types/analysis";
  * rewrites in next.config.ts.
  */
 
+const isProd = process.env.NODE_ENV === "production";
 const API_BASE =
   process.env.API_BASE_URL ||
-  `${process.env.BACKEND_URL || "http://127.0.0.1:8000"}/api`;
+  `${process.env.BACKEND_URL || (isProd ? "https://hirelens-mvf4.onrender.com" : "http://127.0.0.1:8000")}/api`;
 
 export interface HistoryRow {
   id: string;

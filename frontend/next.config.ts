@@ -5,7 +5,8 @@ import type { NextConfig } from "next";
  * backend (default http://127.0.0.1:8000). Override with BACKEND_URL when the
  * backend runs elsewhere.
  */
-const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+const isProd = process.env.NODE_ENV === "production";
+const backendUrl = process.env.BACKEND_URL || (isProd ? "https://hirelens-mvf4.onrender.com" : "http://127.0.0.1:8000");
 
 const nextConfig: NextConfig = {
   async rewrites() {
