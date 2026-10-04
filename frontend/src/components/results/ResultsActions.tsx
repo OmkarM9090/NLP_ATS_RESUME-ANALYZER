@@ -35,7 +35,7 @@ export default function ResultsActions({ result }: { result: AnalysisResponse })
     const text = [
       `ResumeAI Match Report — ${new Date(result.timestamp).toLocaleDateString()}`,
       `Overall score: ${result.overall_score}/100 (${scoreLabel(result.overall_score)})`,
-      `Files: ${result.filenames.resume} × ${result.filenames.job_description}`,
+      `Files: ${result.resume_filename} × ${result.jd_filename}`,
       ``,
       `Breakdown: keyword ${result.score_breakdown.keyword_match.score} · semantic ${result.score_breakdown.semantic_similarity.score} · skills ${result.score_breakdown.skill_match.score} · experience ${result.score_breakdown.experience_relevance.score} · education ${result.score_breakdown.education_match.score}`,
       `Matched skills: ${topMatched}`,

@@ -157,9 +157,9 @@ function ResultsInner() {
               Resume <span className="text-mist">×</span> Job Match
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-mist">
-              <span className="rounded-md bg-white/[0.04] px-2 py-1">{result.filenames.resume}</span>
+              <span className="rounded-md bg-white/[0.04] px-2 py-1">{result.resume_filename}</span>
               <span className="text-mist/50">↔</span>
-              <span className="rounded-md bg-white/[0.04] px-2 py-1">{result.filenames.job_description}</span>
+              <span className="rounded-md bg-white/[0.04] px-2 py-1">{result.jd_filename}</span>
             </div>
           </div>
           <div className="text-right font-mono text-[11px] leading-relaxed text-mist/70">

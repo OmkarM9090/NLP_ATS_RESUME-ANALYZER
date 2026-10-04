@@ -138,7 +138,8 @@ export interface NLPMetadata {
 export interface AnalysisResponse {
   id: string;
   timestamp: string;
-  filenames: { resume: string; job_description: string };
+  resume_filename: string;
+  jd_filename: string;
   overall_score: number;
   score_breakdown: ScoreBreakdown;
   skills_analysis: SkillsAnalysis;
