@@ -1,0 +1,80 @@
+{
+  "_meta": {
+    "description": "Industry/role specific vocabulary used to boost keyword relevance, detect the target domain and enrich recommendations. Terms listed here are treated as domain keywords even when TF-IDF alone would rank them low.",
+    "version": "1.0.0"
+  },
+  "role_signals": {
+    "Data Scientist": ["data science", "machine learning", "statistical modeling", "python", "sql", "experimentation", "a/b testing", "feature engineering", "predictive", "analytics"],
+    "Machine Learning Engineer": ["mlops", "model deployment", "deep learning", "pytorch", "tensorflow", "inference", "model serving", "feature store", "pipelines", "gpu"],
+    "NLP Engineer": ["nlp", "natural language processing", "transformers", "tokenization", "named entity recognition", "llm", "embeddings", "sentiment analysis", "corpus", "text classification"],
+    "Backend Engineer": ["api", "microservices", "database", "rest", "scalability", "authentication", "message queue", "server side", "distributed systems", "caching"],
+    "Frontend Engineer": ["react", "javascript", "typescript", "css", "responsive", "accessibility", "component", "state management", "browser", "ui"],
+    "Full Stack Engineer": ["full-stack", "frontend", "backend", "api", "database", "react", "node.js", "deployment", "end-to-end", "web application"],
+    "DevOps Engineer": ["ci/cd", "kubernetes", "docker", "terraform", "monitoring", "infrastructure", "automation", "cloud", "deployment", "observability", "sre"],
+    "Data Engineer": ["etl", "data pipeline", "data warehouse", "spark", "airflow", "sql", "streaming", "data modeling", "ingestion", "big data"],
+    "Product Manager": ["roadmap", "stakeholder", "user stories", "backlog", "product strategy", "metrics", "go-to-market", "discovery", "prioritization", "cross-functional"],
+    "Business Analyst": ["requirements", "stakeholder", "process improvement", "documentation", "reporting", "kpi", "gap analysis", "workflow", "business case", "data analysis"],
+    "QA Engineer": ["test automation", "quality assurance", "test cases", "regression", "selenium", "cypress", "ci", "bug tracking", "test plan", "coverage"],
+    "Security Engineer": ["security", "vulnerability", "encryption", "penetration testing", "compliance", "threat", "iam", "audit", "owasp", "incident response"],
+    "Cloud Architect": ["aws", "azure", "gcp", "architecture", "migration", "cost optimization", "high availability", "networking", "serverless", "infrastructure as code"]
+  },
+  "industry_keywords": {
+    "technology": ["saas", "platform", "scalable", "api", "cloud native", "microservices", "automation", "integration", "architecture", "deployment", "agile", "devops", "observability", "release"],
+    "finance": ["compliance", "audit", "risk", "regulatory", "reconciliation", "portfolio", "trading", "ledger", "settlement", "kyc", "aml", "forecasting", "margin", "roi"],
+    "healthcare": ["patient", "clinical", "ehr", "hipaa", "diagnosis", "care", "provider", "medical", "fhir", "telehealth", "trial", "pharma"],
+    "retail": ["inventory", "supply chain", "fulfillment", "customer", "merchandising", "logistics", "warehouse", "checkout", "pricing", "demand planning"],
+    "marketing": ["campaign", "conversion", "engagement", "funnel", "seo", "content", "brand", "attribution", "segmentation", "retention", "churn"],
+    "education": ["curriculum", "learning", "student", "assessment", "lms", "pedagogy", "training", "certification", "cohort"],
+    "manufacturing": ["production", "quality control", "six sigma", "lean", "assembly", "maintenance", "throughput", "safety", "iso", "supply"],
+    "consulting": ["client", "engagement", "deliverable", "advisory", "strategy", "stakeholder", "workshop", "proposal", "transformation", "due diligence"]
+  },
+  "seniority_signals": {
+    "intern": ["intern", "internship", "trainee", "apprentice", "co-op"],
+    "junior": ["junior", "entry level", "graduate", "associate", "0-2 years", "1+ year"],
+    "mid": ["mid-level", "mid level", "3+ years", "2-4 years", "software engineer ii"],
+    "senior": ["senior", "sr.", "lead", "5+ years", "7+ years", "staff", "principal", "expert"],
+    "executive": ["director", "vp", "vice president", "head of", "chief", "cto", "ceo", "coo", "c-level", "executive"]
+  },
+  "action_verb_bank": {
+    "leadership": ["led", "managed", "directed", "headed", "supervised", "mentored", "coached", "spearheaded", "orchestrated", "governed", "championed"],
+    "engineering": ["built", "developed", "engineered", "implemented", "designed", "architected", "coded", "programmed", "automated", "integrated", "refactored", "deployed", "migrated", "optimized", "scaled"],
+    "analysis": ["analyzed", "evaluated", "assessed", "measured", "quantified", "modelled", "modeled", "forecasted", "diagnosed", "investigated", "audited", "benchmarked", "profiled"],
+    "communication": ["presented", "documented", "communicated", "negotiated", "persuaded", "authored", "reported", "facilitated", "trained", "evangelized"],
+    "creation": ["created", "launched", "founded", "initiated", "pioneered", "established", "introduced", "conceived", "delivered", "shipped"],
+    "improvement": ["improved", "increased", "reduced", "streamlined", "enhanced", "accelerated", "consolidated", "eliminated", "modernized", "revamped"]
+  },
+  "quantifier_patterns": [
+    "\\$\\s?\\d[\\d,\\.]*\\s?(?:k|m|million|billion|usd)?",
+    "\\b\\d+(?:\\.\\d+)?\\s?%",
+    "\\b\\d[\\d,]*\\s?(?:users|customers|clients|requests|records|rows|transactions|employees|engineers|developers|teams|hours|days|weeks|months)",
+    "\\b(?:increased|reduced|improved|grew|saved|generated)\\s+(?:by\\s+)?\\d+"
+  ],
+  "jd_requirement_markers": {
+    "required": ["required", "requirements", "must have", "must-have", "essential", "mandatory", "you will need", "minimum qualifications", "required qualifications", "basic qualifications", "we require", "key requirements", "responsibilities"],
+    "preferred": ["preferred", "nice to have", "nice-to-have", "plus", "bonus", "advantage", "desirable", "preferred qualifications", "good to have", "a plus", "beneficial"],
+    "responsibilities": ["responsibilities", "what you'll do", "what you will do", "you will", "role overview", "day to day", "key duties", "accountabilities"]
+  },
+  "education_levels": {
+    "phd": ["phd", "ph.d", "ph.d.", "doctorate", "doctoral", "doctor of philosophy", "dphil"],
+    "master": ["master", "masters", "m.s.", "ms", "m.sc", "msc", "m.eng", "meng", "m.b.a", "mba", "m.a.", "ma", "postgraduate", "post-graduate", "graduate degree"],
+    "bachelor": ["bachelor", "bachelors", "b.s.", "bs", "b.sc", "bsc", "b.eng", "beng", "b.a.", "ba", "b.tech", "btech", "undergraduate", "4-year degree", "four year degree"],
+    "associate": ["associate degree", "a.s.", "as degree", "a.a.", "diploma", "higher national diploma", "hnd"],
+    "certification": ["certification", "certificate", "certified", "professional certification", "accreditation", "license"]
+  },
+  "experience_patterns": [
+    "(\\d+)\\s*\\+?\\s*(?:years|yrs)",
+    "(\\d+)\\s*-\\s*(\\d+)\\s*(?:years|yrs)",
+    "(?:minimum|min|at least)\\s*(?:of)?\\s*(\\d+)",
+    "(\\d+)\\s*(?:or more)\\s*(?:years|yrs)"
+  ],
+  "degree_fields": [
+    "computer science", "computer engineering", "software engineering", "information technology",
+    "data science", "machine learning", "artificial intelligence", "statistics", "mathematics",
+    "applied mathematics", "physics", "electrical engineering", "mechanical engineering",
+    "civil engineering", "chemical engineering", "industrial engineering", "business administration",
+    "finance", "accounting", "economics", "marketing", "management", "information systems",
+    "management information systems", "bioinformatics", "computational biology", "neuroscience",
+    "psychology", "linguistics", "design", "human computer interaction", "cybersecurity",
+    "information security", "operations research", "engineering management"
+  ]
+}
