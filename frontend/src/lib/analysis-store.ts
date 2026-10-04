@@ -1,4 +1,4 @@
-import type { AnalysisResponse } from "@/types/analysis";
+import type { AnalysisResponse } from "../types/analysis";
 
 /*
  * Server-side API proxy to the Python backend for analysis history.
