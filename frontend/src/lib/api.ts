@@ -2,7 +2,7 @@ import type {
   AnalysisResponse,
   HealthResponse,
   HistoryResponse,
-} from "@/types/analysis";
+} from "../types/analysis";
 
 async function handle<T>(res: Response): Promise<T> {
   if (!res.ok) {
